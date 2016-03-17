@@ -113,42 +113,6 @@ variable "route-table-adminvpn-unknown3" {
 
 #var.tag_servicecriticality {}
 #var.tag_supportcontact {}
-variable "rds_instance_name" {}
-variable "rds_is_multi_az" {
-    default = "false"
-}
-
-variable "rds_storage_type" {
-    default = "standard"
-}
-
-variable "rds_allocated_storage" {}
-variable "rds_engine_type" {
-    default = "mysql"
-}
-variable "rds_engine_version" {
-    default = "5.6.27"
-}
-
-variable "rds_instance_class" {}
-variable "database_name" {
-    description = "The name of the database to create"
-}
-
-variable "database_user" {}
-variable "database_password" {}
-variable "db_parameter_group" {
-    default = "default.mysql5.6"
-}
-variable "db_skip_final_snapshot" {
-    default = "true"
-}
-variable "db_skip_final_snapshot" {
-    default = "true"
-}
-variable "db_encryption"{
-    default = "false"
-}
 variable "tag_department" {}
 variable "tag_environment" {}
 
