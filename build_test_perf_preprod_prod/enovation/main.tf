@@ -30,14 +30,14 @@ module "rds" {
   tag_environment="${var.tag_environment}"
   db_allocated_storage="${var.db_allocated_storage}"
   db_instance_class="${var.db_instance_class}"
-  db_instance_count="${var.db_instasnce_count}
+  db_instance_count="${var.db_instasnce_count}"
   db_multi_az="${var.db_multi_az}"
   db_vpc_cidr="${var.vpc-cidr}"
   db_private_subnet_cidr_1a="${var.db_private_subnet_cidr_1a}"
   db_private_subnet_cidr_1b="${var.db_private_subnet_cidr_1b}"
-  database_name="${var.database_name}""
-  db_username="${var.db_username}""
-  db_password="${var.db_password}""
+  database_name="${var.database_name}"
+  db_username="${var.db_username}"
+  db_password="${var.db_password}"
   db_skip_final_snapshot="${var.db_skip_final_snapshot}"
   db_encryption="${var.db_encryption}"
 }
