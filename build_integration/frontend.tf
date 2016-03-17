@@ -1,7 +1,7 @@
 #################################################
  # EC2 -ActiveMQ
 resource "aws_instance" "amq" {
-   ami = "ami-c849f6bb"
+   ami = "${var.ami_amq}"
    instance_type = "${var.instance_type}"
    key_name = "${var.aws_key_name}"
    subnet_id = "${aws_subnet.eu-west-1a.id}"
