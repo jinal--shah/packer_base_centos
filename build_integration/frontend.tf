@@ -1,46 +1,46 @@
 #################################################
  # EC2 -ActiveMQ
 resource "aws_instance" "amq" {
-   ami = "${var.ami_amq}"
-   instance_type = "${var.instance_type}"
-   key_name = "${var.aws_key_name}"
-   subnet_id = "${aws_subnet.eu-west-1a.id}"
-   vpc_security_group_ids = ["${aws_security_group.default.id}"]
+  ami = "${var.ami_amq}"
+  instance_type = "${var.instance_type}"
+  key_name = "${var.aws_key_name}"
+  subnet_id = "${aws_subnet.eu-west-1a.id}"
+  vpc_security_group_ids = ["${aws_security_group.default.id}"]
 
-   tags {
-     Name = "${var.tag_project}-${var.tag_environment}-vpc"
-   }
- }
+  tags {
+    Name = "${var.tag_project}-${var.tag_environment}-vpc"
+  }
+}
 
- resource "aws_route53_record" "mq-dns" {
-    zone_id = "${aws_route53_zone.int.id}"
-    name = "mq1-${var.buildnum}"
-    type = "A"
-    ttl = "60"
-    records = ["${aws_instance.amq.private_ip}"]
- }
+resource "aws_route53_record" "mq-dns" {
+   zone_id = "${aws_route53_zone.int.id}"
+   name = "mq1-${var.buildnum}"
+   type = "A"
+   ttl = "60"
+   records = ["${aws_instance.amq.private_ip}"]
+}
 
- #################################################
- # DHCP Options
- resource "aws_vpc_dhcp_options" "default" {
-   domain_name = "${aws_route53_zone.int.name}"
-   domain_name_servers = ["${var.domain_name_servers}"]
+#################################################
+# DHCP Options
+resource "aws_vpc_dhcp_options" "default" {
+  domain_name = "${aws_route53_zone.int.name}"
+  domain_name_servers = ["${var.domain_name_servers}"]
 
-   tags {
-     Name        = "${var.tag_project}-${var.tag_environment}-dopt"
-     Build       = "Automatic"
-     Creator     = "${var.tag_creator}"
-     Department  = "${var.tag_department}"
-     Environment = "${var.tag_environment}"
-     Project     = "${var.tag_project}"
-     Service     = "${var.tag_service}"
-   }
- }
+  tags {
+    Name        = "${var.tag_project}-${var.tag_environment}-dopt"
+    Build       = "Automatic"
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
+    Environment = "${var.tag_environment}"
+    Project     = "${var.tag_project}"
+    Service     = "${var.tag_service}"
+  }
+}
 
- resource "aws_vpc_dhcp_options_association" "default" {
-   vpc_id = "${aws_vpc.default.id}"
-   dhcp_options_id = "${aws_vpc_dhcp_options.default.id}"
- }
+resource "aws_vpc_dhcp_options_association" "default" {
+  vpc_id = "${aws_vpc.default.id}"
+  dhcp_options_id = "${aws_vpc_dhcp_options.default.id}"
+}
 
 #################################################
 # ELB
@@ -161,8 +161,6 @@ resource "aws_security_group" "default" {
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }
-
-
 
   # ICMP
   ingress {
