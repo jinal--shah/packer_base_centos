@@ -1,0 +1,70 @@
+{
+  "variables": {
+    "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
+    "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "build_id": "{{env `BUILD_ID`}}",
+    "code_branch": "{{env `CODE_BRANCH`}}",
+    "puppet_branch": "{{env `PUPPET_BRANCH`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "base_image_source_ami": "{{env `AWS_SOURCE_AMI`}}",
+    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "ssh_username": "{{env `SSH_USERNAME`}}",
+    "ami_name": "eurostar-base-centos-6.x-puppet-3.8.2",
+    "ami_description": "Eurostar Base Centos-6.x Golden Image With Puppet-3.8.2 {{timestamp}}",
+    "puppet_version": "3.8.2"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "eu-west-1",
+      "source_ami": "{{user `base_image_source_ami`}}",
+      "instance_type": "{{user `aws_instance_type`}}",
+      "ami_name": "{{user `ami_name`}}",
+      "ami_description": "{{user `ami_description`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
+      "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
+      "force_deregister": "true",
+      "launch_block_device_mappings": [{
+        "device_name": "/dev/sda1",
+        "delete_on_termination": true,
+        "volume_size": "8"
+      }],
+      "tags": {
+        "OS_Version": "Centos",
+        "Release": "6.x",
+        "Maker": "Stuart",
+        "Puppet": "{{user `puppet_version`}}",
+        "BuildId": "{{user `build_id`}}",
+	"Project": "evo",
+	"Service": "base",
+	"Role": "evobase",
+	"Environment": "any",
+	"CodeBranch": "dev"
+
+
+      }
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "yum upgrade --assumeyes",
+        "rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm",
+        "#rpm -e --nodeps mysql-libs",
+        "yum install -y 'puppet-{{user `puppet_version`}}' rubygem-deep_merge python-setuptools",
+        "yum clean all",
+        "rm -rvf /root/.ssh/authorized_keys"
+      ]
+    }
+  ],
+
+  "post-processors": [
+  ]
+}

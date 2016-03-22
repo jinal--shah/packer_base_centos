@@ -26,6 +26,12 @@ variable "aws_nat_ami" {
 
 variable "ami_appserver" {}
 
+variable "ami_amq" {
+    default = {
+        eu-west-1 = "ami-c849f6bb"
+    }
+}
+
 variable "vpc_cidr" {}
 
 variable "public_subnet_cidr_1a" {}
