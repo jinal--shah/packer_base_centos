@@ -8,7 +8,7 @@ AWS_DEFAULT_PROFILE?=eurostar
 
 BUILD_ID?=$(shell date +%s)
 BUILDER?=amazon-ebs
-SHELL=/bin/bash
+SHELL?=/bin/bash
 BASE_AMI?=ami-a63d7ad1
 BASE_DOMAIN?=local.
 
@@ -22,8 +22,8 @@ PUPPET_BRANCH?=enovation
 PUPPET_DIR?=puppet
 PUPPET_ENVIRONMENT?=integration
 
-PACKER=$(shell which packer)
-PACKER_DEBUG=#-debug
+PACKER?=$(shell which packer)
+PACKER_DEBUG?=#-debug
 PACKER_DIR?=./
 PACKER_LOG?=1
 PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
