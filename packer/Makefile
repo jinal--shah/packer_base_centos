@@ -44,15 +44,14 @@ VARS=-var 'base_ami=$(BASE_AMI)' \
 .PHONY: help
 help:
 	@echo [INFO] Packer - Available make targets and descriptions
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-    @cat $(MAKEFILE_LIST) | grep -e "^[a-zA-Z_\-]*: *.*## *" | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: sshkeyfile
 sshkeyfile: ## Symlink local sshkey to directory to use in Packer
-	@[ -f ./$(SSH_PRIVATE_KEY_FILE) ] && ( echo "FOUND: ./$(SSH_PRIVATE_KEY_FILE)" ) || ( \
+	@[ -f ./$(SSH_PRIVATE_KEY_FILE) ] && ( echo "[INFO] Found sshkey: ./$(SSH_PRIVATE_KEY_FILE)" ) || ( \
 	  [ -f ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ] && \
-	    ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE) )
+	    ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE) || \
+	      printf "\033[0;31m[ERROR] Create a copy of sshkey in current directory (or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\n"; exit 1 )
 
 .PHONY: validate
 validate: sshkeyfile ## Run packer validate using defined variables
@@ -62,7 +61,7 @@ validate: sshkeyfile ## Run packer validate using defined variables
 	  "$(PACKER_TEMPLATE_PUPPET)"
 
 .PHONY: build 
-build: validate ## Run packer build using defined variables
+build: validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	packer build $(PACKER_DEBUG) \
 	  $(VAR_FILE) \
 	  $(VARS) \
