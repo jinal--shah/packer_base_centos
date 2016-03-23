@@ -34,6 +34,7 @@ VAR_FILE=-var-file=$(PACKER_DIR)/default-variables.json
 # custom vars to pass to packer
 VARS=-var 'base_ami=$(BASE_AMI)' \
      -var 'base_domain=$(BASE_DOMAIN)' \
+     -var 'build_id=$(BUILD_ID)' \
      -var 'code_branch=$(CODE_BRANCH)' \
      -var 'puppet_branch=$(PUPPET_BRANCH)' \
      -var 'puppet_dir=$(PUPPET_DIR)' \
