@@ -85,11 +85,11 @@
     {
       "type": "shell",
       "inline": [
-        "rm -rf /tmp/puppet || true",
-        "rm -rf /etc/puppet || true",
-        "rm -rf /tmp/* || true ",
-        "rm -rf /var/tmp/* || true",
-        "touch /packed-by-packer-{{timestamp}}"
+        "sudo rm -rf /tmp/puppet || true",
+        "sudo rm -rf /etc/puppet || true",
+        "sudo rm -rf /tmp/* || true ",
+        "sudo rm -rf /var/tmp/* || true",
+        "sudo touch /packed-by-packer-{{timestamp}}"
       ]
     }
   ],
