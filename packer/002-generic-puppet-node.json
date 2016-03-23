@@ -67,7 +67,7 @@
 
     {
       "type": "puppet-masterless",
-      "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
+      "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} FACTER_operatingsystemmajrelease='6' sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
       "facter": {
         "branch_tag": "{{user `code_branch`}}",
         "build_id": "{{user `build_id`}}",
