@@ -57,7 +57,7 @@
     {
       "type": "shell",
       "inline": [
-        "cd /home/ec2-user && sudo -ttt git clone git@github.com:ivangutev/eif_puppet.git --branch {{user `puppet_branch`}}",
+        "cd /home/ec2-user && sudo -ttt git clone {{user `puppet_repo`}} --branch {{user `puppet_branch`}}",
         "cd /home/ec2-user/eif_puppet && sudo -ttt /usr/local/bin/librarian-puppet clean && sudo -ttt /usr/local/bin/librarian-puppet install",
         "cd /home/ec2-user/ && sudo -ttt git clone git@github.com:ivangutev/puppet-rsyslog-eif.git",
         "cd /home/ec2-user/ && sudo -ttt rm -rf eif_puppet/modules/rsyslog/* && sudo -ttt cp -r puppet-rsyslog-eif/* eif_puppet/modules/rsyslog/",
