@@ -43,8 +43,8 @@ VARS=-var 'base_ami=$(BASE_AMI)' \
      -var 'puppet_role=$(ROLE)' \
      -var 'puppet_repo=$(PUPPET_REPO)' \
      -var 'puppet_service=$(PUPPET_SERVICE)' \
-     -var 'access_key=$(AWS_ACCESS_KEY)' \
-     -var 'secret_key=$(AWS_SECRET_KEY)' 
+     -var 'aws_access_key=$(AWS_ACCESS_KEY)' \
+     -var 'aws_secret_key=$(AWS_SECRET_KEY)' 
 
 
 .PHONY: help
