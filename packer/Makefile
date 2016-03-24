@@ -41,7 +41,7 @@ VARS=-var 'base_ami=$(BASE_AMI)' \
      -var 'puppet_dir=$(PUPPET_DIR)' \
      -var 'puppet_environment=$(PUPPET_ENVIRONMENT)' \
      -var 'puppet_role=$(ROLE)' \
-     -var 'puppet_repo=$(PUPPET_REPO)'
+     -var 'puppet_repo=$(PUPPET_REPO)' \
      -var 'puppet_service=$(PUPPET_SERVICE)'
 
 
