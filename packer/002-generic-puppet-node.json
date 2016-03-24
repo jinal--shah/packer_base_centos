@@ -77,7 +77,9 @@
         "role": "{{user `puppet_role`}}",
         "base_domain": "{{user `base_domain`}}",
         "service": "{{user `puppet_service`}}",
-        "env": "{{user `puppet_environment`}}"
+        "env": "{{user `puppet_environment`}}",
+      	"access_key": "{{user `aws_access_key`}}",
+      	"secret_key": "{{user `aws_secret_key`}}"        
       },
       "manifest_file": "{{pwd}}/default.pp",
       "prevent_sudo": "false"
