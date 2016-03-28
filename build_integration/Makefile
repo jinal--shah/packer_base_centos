@@ -61,7 +61,8 @@ VARS=-var 'BUILD_ID=$(BUILD_NUMBER)' \
 		 -var 'public_subnet_cidr_1a=10.38.128.128/26' \
 		 -var 'private_subnet_cidr_1a=10.38.128.0/26' \
 		 -var 'private_subnet_cidr_1b=10.38.128.64/26' \
-		 -var 'aws_route53_zone_id=Z3RU84YBKRCIRB'
+		 -var 'aws_route53_zone_id=Z3RU84YBKRCIRB' \
+		 -var 'ami_amq=ami-c849f6bb'
 
 
 
