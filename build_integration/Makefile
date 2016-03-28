@@ -66,5 +66,5 @@ VARS=-var 'BUILD_ID=$(BUILD_NUMBER)' \
 
 
 .PHONY: build
-build: validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
+build:  ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	${TERRAFORM} apply $(VARS)
