@@ -135,10 +135,6 @@ variable "route-table-elk" {
   default = "rtb-d66974b3"
 }
 
-variable "vpc_domain_name" {
-  description = "AWS Route53 Domain Name. Must exist! Eg. integration.enovation.trainz.io"
-}
-
 variable "domain_name_servers" {}
 
 variable "db_vpc_cidr" {}
