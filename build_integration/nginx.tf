@@ -30,7 +30,8 @@ resource "aws_autoscaling_group" "nginx" {
   desired_capacity = "${var.asg_desired_nginx}"
   force_delete = true
   launch_configuration = "${aws_launch_configuration.nginx.name}"
-  vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
+#  vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
+  vpc_zone_identifier = ["${aws_subnet.eu-west-1a-public.id}","${aws_subnet.eu-west-1b-public.id}"]
   load_balancers = ["${aws_elb.nginx.name}"]
   tag {
     key = "Name"
@@ -68,7 +69,7 @@ resource "aws_launch_configuration" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-LaunchConfig"
   image_id = "${var.ami_nginx}"
   instance_type = "${var.instance_type_nginx}"
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   security_groups = ["${aws_security_group.nginx.id}"]
 #  user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
@@ -92,8 +93,8 @@ resource "aws_security_group" "nginx" {
 
   # HTTP access
   ingress {
-    from_port = 8080
-    to_port = 8080
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }
