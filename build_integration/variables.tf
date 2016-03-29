@@ -24,6 +24,11 @@ variable "aws_nat_ami" {
     }
 }
 
+variable "db-endpoint" {}
+
+variable "ami_frontend" {}
+
+
 variable "ami_appserver" {}
 
 variable "ami_amq" {}

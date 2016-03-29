@@ -1,62 +1,17 @@
 #################################################
- # EC2 -ActiveMQ
-resource "aws_instance" "amq" {
-  ami = "${var.ami_amq}"
-  instance_type = "${var.instance_type}"
-  key_name = "${var.aws_key_name}"
-  subnet_id = "${aws_subnet.eu-west-1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.default.id}"]
-
-  tags {
-    Name = "${var.tag_project}-${var.tag_environment}-vpc"
-  }
-}
-
-resource "aws_route53_record" "mq-dns" {
-   zone_id = "${aws_route53_zone.int.id}"
-#   name = "mq1-${var.buildnum}"
-   name = "mq1"
-   type = "A"
-   ttl = "60"
-   records = ["${aws_instance.amq.private_ip}"]
-}
-
-#################################################
-# DHCP Options
-resource "aws_vpc_dhcp_options" "default" {
-  domain_name = "${aws_route53_zone.int.name}"
-  domain_name_servers = ["${var.domain_name_servers}"]
-
-  tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-dopt"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Service     = "${var.tag_service}"
-  }
-}
-
-resource "aws_vpc_dhcp_options_association" "default" {
-  vpc_id = "${aws_vpc.default.id}"
-  dhcp_options_id = "${aws_vpc_dhcp_options.default.id}"
-}
-
-#################################################
-# ELB
-resource "aws_elb" "default" {
-  name = "${var.tag_project}-${var.tag_environment}-elb"
+# ELB - Frontend
+resource "aws_elb" "frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-FRONT"
 
   subnets = [
-    "${aws_subnet.eu-west-1a-public.id}",
-    "${aws_subnet.eu-west-1b-public.id}"
+    "${aws_subnet.eu-west-1a.id}",
+    "${aws_subnet.eu-west-1b.id}"
   ]
-  internal = false
+  internal = true
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 8080
+    instance_port = 80
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -65,12 +20,12 @@ resource "aws_elb" "default" {
     healthy_threshold = 3
     unhealthy_threshold = 5
     timeout = 5
-    target = "HTTP:8080/swagger-ui.html"
+    target = "TCP:80"
     interval = 30
   }
-  security_groups = ["${aws_security_group.default.id}"]
+  security_groups = ["${aws_security_group.frontend.id}"]
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-asg-sg"
+    Name        = "${var.tag_project}-${var.tag_environment}-elb-frontend"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -81,14 +36,13 @@ resource "aws_elb" "default" {
   }
 }
 
-resource "aws_route53_record" "default" {
+resource "aws_route53_record" "elb-frontend" {
   zone_id = "${aws_route53_zone.int.id}"
-#  name = "elb.v1.1-${var.tag_environment}.${var.tag_project}"
-  name = "elb"
+  name = "frontend-elb"
   type = "A"
   alias = {
-    name = "${aws_elb.default.dns_name}"
-    zone_id = "${aws_elb.default.zone_id}"
+    name = "${aws_elb.frontend.dns_name}"
+    zone_id = "${aws_elb.frontend.zone_id}"
     evaluate_target_health = true
   }
   depends_on = ["aws_route53_zone.int"]
@@ -97,29 +51,29 @@ resource "aws_route53_record" "default" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
-resource "aws_autoscaling_group" "default" {
-  name = "${var.tag_project}-${var.tag_environment}-NEW"
+resource "aws_autoscaling_group" "frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-frontend"
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
   desired_capacity = "${var.asg_desired}"
   force_delete = true
-  launch_configuration = "${aws_launch_configuration.default.name}"
+  launch_configuration = "${aws_launch_configuration.frontend.name}"
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
-  load_balancers = ["${aws_elb.default.name}"]
+  load_balancers = ["${aws_elb.frontend.name}"]
   tag {
     key = "Name"
-    value = "${var.tag_project}-${var.tag_environment}-asg"
+    value = "${var.tag_project}-${var.tag_environment}-asg-frontend"
     propagate_at_launch = "true"
   }
   depends_on = ["aws_instance.amq"]
 }
 
-resource "aws_launch_configuration" "default" {
-  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-888"
-  image_id = "${var.ami_appserver}"
+resource "aws_launch_configuration" "frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-frontend"
+  image_id = "${var.ami_frontend}"
   instance_type = "${var.instance_type}"
   associate_public_ip_address = false
-  security_groups = ["${aws_security_group.default.id}"]
+  security_groups = ["${aws_security_group.frontend.id}"]
   user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
 }
@@ -127,8 +81,8 @@ resource "aws_launch_configuration" "default" {
 #################################################
 # Security Group HTTP, MySQL and SSH access
 #################################################
-resource "aws_security_group" "default" {
-  name = "${var.tag_project}-${var.tag_environment}"
+resource "aws_security_group" "frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-frontend"
   description = "{var.tag_project}-${var.tag_environment}"
   vpc_id = "${aws_vpc.default.id}"
 
@@ -140,34 +94,10 @@ resource "aws_security_group" "default" {
     cidr_blocks = ["10.0.0.0/8"]
   }
 
-  # AMQ access
-  ingress {
-    from_port = 61616
-    to_port = 61616
-    protocol = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  # MySQL access
-  ingress {
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = ["${var.db_vpc_cidr}"]
-  }
-
   # HTTP access
   ingress {
     from_port = 80
     to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["10.0.0.0/8"]
-  }
-
-  # HTTP access
-  ingress {
-    from_port = 8080
-    to_port = 8080
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }

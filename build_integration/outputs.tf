@@ -9,7 +9,11 @@ output "vpc_cidr" {
     value = "${var.vpc_cidr}"
 }
 #################################################
-# Outputs
+# Outputs frontend
 output "asg_launchconfig_id" {
-  value = "${aws_launch_configuration.default.id}"
+  value = "${aws_launch_configuration.frontend.id}"
+}
+# Outputs backend
+output "asg_launchconfig_id" {
+  value = "${aws_launch_configuration.backend.id}"
 }
