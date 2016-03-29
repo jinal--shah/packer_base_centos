@@ -14,7 +14,8 @@ resource "aws_instance" "amq" {
 
 resource "aws_route53_record" "mq-dns" {
    zone_id = "${aws_route53_zone.int.id}"
-   name = "mq1-${var.buildnum}"
+#   name = "mq1-${var.buildnum}"
+   name = "mq1"
    type = "A"
    ttl = "60"
    records = ["${aws_instance.amq.private_ip}"]
@@ -55,7 +56,7 @@ resource "aws_elb" "default" {
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 80
+    instance_port = 8080
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -82,7 +83,8 @@ resource "aws_elb" "default" {
 
 resource "aws_route53_record" "default" {
   zone_id = "${aws_route53_zone.int.id}"
-  name = "elb.v1.1-${var.tag_environment}.${var.tag_project}"
+#  name = "elb.v1.1-${var.tag_environment}.${var.tag_project}"
+  name = "elb"
   type = "A"
   alias = {
     name = "${aws_elb.default.dns_name}"
@@ -151,13 +153,21 @@ resource "aws_security_group" "default" {
     from_port = 3306
     to_port = 3306
     protocol = "tcp"
-    cidr_blocks = ["10.38.120.0/26"]
+    cidr_blocks = ["${var.db_vpc_cidr}"]
   }
 
   # HTTP access
   ingress {
     from_port = 80
     to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  # HTTP access
+  ingress {
+    from_port = 8080
+    to_port = 8080
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }

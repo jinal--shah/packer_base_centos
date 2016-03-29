@@ -15,7 +15,7 @@ resource "aws_route53_zone" "main" {
 }
 
 resource "aws_route53_zone" "int" {
-  name = "v1-1-eno.trainz.io"
+  name = "${var.buildnum}-eno.${var.domain}"
   vpc_id = "${aws_vpc.default.id}"
 
   tags {

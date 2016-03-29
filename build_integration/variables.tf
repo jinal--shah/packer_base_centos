@@ -136,3 +136,19 @@ variable "domain_name_servers" {}
 variable "db_vpc_cidr" {}
 
 # REQUIRED FOR PEERING TO ELK VPC - END
+
+
+variable "domain" {
+  description = "Top level domain to use; trainz.io or eurostar.com"
+  default = "trainz.io"
+}
+
+variable "aws_route53_zone" {
+  default = "Z2R7EXT83GFAR6" #trainz.io.
+#  default = "Z2GNWE02RWX8RO" #prod.aws.trainz.io.
+}
+
+variable "snap_cname" {
+  description = "cname for main elb endpoint snap_cname+tag_environment"
+  default = "snap"
+}
