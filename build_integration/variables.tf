@@ -25,6 +25,7 @@ variable "aws_nat_ami" {
 }
 
 variable "ami_appserver" {}
+
 variable "ami_amq" {}
 
 variable "vpc_cidr" {}
@@ -128,10 +129,6 @@ variable "cidr-elk" {
 variable "route-table-elk" {
   description = "Route Table for ELK VPC"
   default = "rtb-d66974b3"
-}
-
-variable "vpc_domain_name" {
-  description = "AWS Route53 Domain Name. Must exist! Eg. integration.enovation.trainz.io"
 }
 
 variable "domain_name_servers" {}
