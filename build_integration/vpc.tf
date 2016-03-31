@@ -28,11 +28,11 @@ resource "aws_vpc" "default" {
   enable_dns_support = true
   enable_dns_hostnames = true
   tags {
-    Name        = "test-${var.tag_service}-${tag_environment}-vpc"
+    Name        = "${var.tag_project}-${var.tag_environment}-vpc"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
+    Role        = "vpc"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
     Creator     = "${var.tag_creator}"
@@ -49,7 +49,7 @@ resource "aws_internet_gateway" "default" {
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
+    Role        = "igw"
     Creator     = "${var.tag_creator}"
   }
 }
@@ -90,12 +90,12 @@ resource "aws_subnet" "eu-west-1b-public" {
   availability_zone = "eu-west-1b"
 
   tags {
-    Name       = "${var.tag_project}-${var.tag_environment}-public-subnet-1a"
+    Name        = "${var.tag_project}-${var.tag_environment}-public-subnet-1a"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "subnet"
   }
 }
 #################################################
@@ -108,13 +108,14 @@ resource "aws_subnet" "eu-west-1a" {
   availability_zone = "eu-west-1a"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-private-subnet-1a"    Environment = "${var.tag_environment}"
+    Name        = "${var.tag_project}-${var.tag_environment}-private-subnet-1a"
+    Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
+    Role        = "subnet"
   }
 }
 
@@ -129,36 +130,34 @@ resource "aws_subnet" "eu-west-1b" {
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "subnet"
   }
 }
 #################################################
 # Route Table
 #################################################
 resource "aws_route_table" "private" {
-    vpc_id = "${aws_vpc.default.id}"
-    route {
-        cidr_block = "0.0.0.0/0"
-        nat_gateway_id = "${aws_nat_gateway.gw.id}"
-    }
-    route {
-        cidr_block = "${var.cidr-admin}"
-        nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
-    }
-    route {
-        cidr_block = "${var.cidr-elk}"
-        nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
-    }
-
-
+  vpc_id = "${aws_vpc.default.id}"
+  route {
+      cidr_block = "0.0.0.0/0"
+      nat_gateway_id = "${aws_nat_gateway.gw.id}"
+  }
+  route {
+      cidr_block = "${var.cidr-admin}"
+      nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
+  }
+  route {
+      cidr_block = "${var.cidr-elk}"
+      nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
+  }
   tags {
     Name        = "${var.tag_project}-rtb-private"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "routetable"
   }
 }
 
@@ -174,29 +173,27 @@ resource "aws_route_table_association" "eu-west-1b-rta" {
 
 
 resource "aws_route_table" "public" {
-    vpc_id = "${aws_vpc.default.id}"
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id = "${aws_internet_gateway.default.id}"
-    }
-    route {
-        cidr_block = "${var.cidr-admin}"
-        nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
-    }
+  vpc_id = "${aws_vpc.default.id}"
+  route {
+      cidr_block = "0.0.0.0/0"
+      gateway_id = "${aws_internet_gateway.default.id}"
+  }
+  route {
+      cidr_block = "${var.cidr-admin}"
+      nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
+  }
 
-    route {
-        cidr_block = "${var.cidr-elk}"
-        nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
-    }
-
-
+  route {
+      cidr_block = "${var.cidr-elk}"
+      nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
+  }
   tags {
     Name        = "${var.tag_project}-rtb-public"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "routetable"
   }
 }
 

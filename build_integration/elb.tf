@@ -1,7 +1,7 @@
 # ELB
 variable "certificate" {
   description = "Existing Certificate Name to use from AWS"
-# default = "STAR.trainz.io"
+  default = "STAR.trainz.io"
 # default = "wildcard.eurostar.com"
 }
 
@@ -10,8 +10,7 @@ variable "account_id" {
 }
 
 resource "aws_elb" "nginx" {
-  name = "nginx-elb-${var.tag_project}"
-#  subnets = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}","${aws_subnet.eu-west-1c.id}"]
+  name = "${var.tag_project}-${var.tag_environment}-MAIN"
 #  subnets = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
   subnets = ["${aws_subnet.eu-west-1a-public.id}","${aws_subnet.eu-west-1b-public.id}"]
   security_groups = ["${aws_security_group.elb.id}"]
@@ -46,7 +45,7 @@ resource "aws_elb" "nginx" {
 
 
 resource "aws_security_group" "elb" {
-  name = "nginx-elb-sg-${var.tag_project}"
+  name = "${var.tag_project}-${var.tag_environment}-nginx"
   description = "Security Group for Nginx ELB"
   vpc_id = "${aws_vpc.default.id}"
 

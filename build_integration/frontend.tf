@@ -11,7 +11,7 @@ resource "aws_elb" "frontend" {
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 80
+    instance_port = 8080
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -31,8 +31,8 @@ resource "aws_elb" "frontend" {
     Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
     Service     = "${var.tag_service}"
+    Role        = "elb"
   }
 }
 
@@ -63,6 +63,31 @@ resource "aws_autoscaling_group" "frontend" {
   tag {
     key = "Name"
     value = "${var.tag_project}-${var.tag_environment}-asg-frontend"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Environment"
+    value = "${var.tag_environment}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Project"
+    value = "${var.tag_project}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Service"
+    value = "${var.tag_service}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Creator"
+    value = "${var.tag_creator}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Department"
+    value = "${var.tag_department}"
     propagate_at_launch = "true"
   }
   depends_on = ["aws_instance.amq"]
@@ -96,6 +121,14 @@ resource "aws_security_group" "frontend" {
 
   # HTTP access
   ingress {
+    from_port = 8080
+    to_port = 8080
+    protocol = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  # HTTP access
+  ingress {
     from_port = 80
     to_port = 80
     protocol = "tcp"
@@ -119,10 +152,11 @@ resource "aws_security_group" "frontend" {
   }
 
   tags {
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
-    Creator     = "${var.tag_creator}"
+    Role        = "security"
   }
 }

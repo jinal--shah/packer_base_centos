@@ -8,13 +8,18 @@ resource "aws_instance" "amq" {
   vpc_security_group_ids = ["${aws_security_group.amq.id}"]
 
   tags {
-    Name = "${var.tag_project}-${var.tag_environment}-vpc"
+    Name        = "${var.tag_project}-${var.tag_environment}-amq"
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
+    Environment = "${var.tag_environment}"
+    Project     = "${var.tag_project}"
+    Service     = "${var.tag_service}"
+    Role        = "amq"
   }
 }
 
-resource "aws_route53_record" "mq-dns" {
+resource "aws_route53_record" "amq" {
    zone_id = "${aws_route53_zone.int.id}"
-#   name = "mq1-${var.buildnum}"
    name = "mq1"
    type = "A"
    ttl = "60"
@@ -61,11 +66,12 @@ resource "aws_security_group" "amq" {
   }
 
   tags {
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
-    Creator     = "${var.tag_creator}"
+    Role        = "security"
   }
 }
 
@@ -105,7 +111,7 @@ resource "aws_elb" "backend" {
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 80
+    instance_port = 8080
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -119,18 +125,18 @@ resource "aws_elb" "backend" {
   }
   security_groups = ["${aws_security_group.backend.id}"]
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-asg-sg"
+    Name        = "${var.tag_project}-${var.tag_environment}-elb-backend"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
     Service     = "${var.tag_service}"
+    Role        = "elb"
   }
 }
 
-resource "aws_route53_record" "elb-int" {
+resource "aws_route53_record" "elb-backend" {
   zone_id = "${aws_route53_zone.int.id}"
   name = "backend-elb"
   type = "A"
@@ -156,14 +162,39 @@ resource "aws_autoscaling_group" "backend" {
   load_balancers = ["${aws_elb.backend.name}"]
   tag {
     key = "Name"
-    value = "${var.tag_project}-${var.tag_environment}-asg"
+    value = "${var.tag_project}-${var.tag_environment}-asg-backend"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Environment"
+    value = "${var.tag_environment}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Project"
+    value = "${var.tag_project}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Service"
+    value = "${var.tag_service}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Creator"
+    value = "${var.tag_creator}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Department"
+    value = "${var.tag_department}"
     propagate_at_launch = "true"
   }
   depends_on = ["aws_instance.amq"]
 }
 
 resource "aws_launch_configuration" "backend" {
-  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-888"
+  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-backend"
   image_id = "${var.ami_appserver}"
   instance_type = "${var.instance_type}"
   associate_public_ip_address = false
@@ -176,7 +207,7 @@ resource "aws_launch_configuration" "backend" {
 # Security Group HTTP, MySQL and SSH access
 #################################################
 resource "aws_security_group" "backend" {
-  name = "${var.tag_project}-${var.tag_environment}"
+  name = "${var.tag_project}-${var.tag_environment}-backend"
   description = "{var.tag_project}-${var.tag_environment}"
   vpc_id = "${aws_vpc.default.id}"
 
@@ -186,22 +217,6 @@ resource "aws_security_group" "backend" {
     to_port = 22
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
-  }
-
-  # AMQ access
-  ingress {
-    from_port = 61616
-    to_port = 61616
-    protocol = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  # MySQL access
-  ingress {
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = ["${var.db_vpc_cidr}"]
   }
 
   # HTTP access
@@ -237,10 +252,11 @@ resource "aws_security_group" "backend" {
   }
 
   tags {
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
-    Creator     = "${var.tag_creator}"
+    Role        = "security"
   }
 }
