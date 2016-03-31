@@ -7,7 +7,7 @@ variable "instance_type_nginx" {
 
 variable "asg_min_nginx" {
   description = "Min numbers of servers in ASG"
-  default = "1"
+  default = "2"
 }
 
 variable "asg_max_nginx" {
@@ -17,7 +17,7 @@ variable "asg_max_nginx" {
 
 variable "asg_desired_nginx" {
   description = "Desired numbers of servers in ASG"
-  default = "1"
+  default = "2"
 }
 
 #################################################
