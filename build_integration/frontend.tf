@@ -20,7 +20,7 @@ resource "aws_elb" "frontend" {
     healthy_threshold = 3
     unhealthy_threshold = 5
     timeout = 5
-    target = "TCP:80"
+    target = "TCP:8080"
     interval = 30
   }
   security_groups = ["${aws_security_group.frontend.id}"]
