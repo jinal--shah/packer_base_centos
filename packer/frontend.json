@@ -50,40 +50,19 @@
 	"BaseAmi": "{{user `base_ami`}}"
 
       }
-    } 
+    }
   ],
 
   "provisioners": [
     {
       "type": "shell",
       "inline": [
-        "cd /home/ec2-user && sudo -ttt git clone {{user `puppet_repo`}} --branch {{user `puppet_branch`}}",
-        "cd /home/ec2-user/eif_puppet && sudo -ttt /usr/local/bin/librarian-puppet clean && sudo -ttt /usr/local/bin/librarian-puppet install",
-        "cd /home/ec2-user/ && sudo -ttt git clone git@github.com:ivangutev/puppet-rsyslog-eif.git",
-        "cd /home/ec2-user/ && sudo -ttt rm -rf eif_puppet/modules/rsyslog/* && sudo -ttt cp -r puppet-rsyslog-eif/* eif_puppet/modules/rsyslog/",
-        "sudo rm -rf /etc/puppet && sudo cp -a /home/ec2-user/eif_puppet /etc/puppet && sudo chown -R puppet:puppet /etc/puppet"
+        "cd /home/ec2-user && sudo -ttt git clone git@github.com:EurostarDigital/enovation_fe.git",
+        "sudo -ttt yum install https://rpm.nodesource.com/pub_5.x/el/6/x86_64/nodesource-release-el6-1.noarch.rpm -y && sudo -ttt yum install nodejs -y",
+        "export NODE_PROGRESS=false && cd /home/ec2-user/enovation_fe && sudo -ttt npm install forever -g && sudo -ttt npm config set //registry.npmjs.org/:_authToken=5007aa9c-066c-411d-8820-d1db609d5019 && sudo -ttt npm install || true && sudo -ttt npm run build:translations"
       ]
     },
 
-    {
-      "type": "puppet-masterless",
-      "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} FACTER_operatingsystemmajrelease='6' sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
-      "facter": {
-        "branch_tag": "{{user `code_branch`}}",
-        "build_id": "{{user `build_id`}}",
-        "is_production": "false",
-        "product": "{{user `puppet_product`}}",
-        "environment": "{{user `puppet_environment`}}",
-        "role": "{{user `puppet_role`}}",
-        "base_domain": "{{user `base_domain`}}",
-        "service": "{{user `puppet_service`}}",
-        "env": "{{user `puppet_environment`}}",
-      	"access_key": "{{user `aws_access_key`}}",
-      	"secret_key": "{{user `aws_secret_key`}}"        
-      },
-      "manifest_file": "{{pwd}}/default.pp",
-      "prevent_sudo": "false"
-    },
     {
       "type": "shell",
       "inline": [
