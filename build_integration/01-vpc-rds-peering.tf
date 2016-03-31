@@ -1,8 +1,8 @@
 resource "aws_vpc_peering_connection" "db" {
-    peer_owner_id = "018274991670"
-    peer_vpc_id = "vpc-5b49433e"
-    vpc_id = "${aws_vpc.default.id}"
-      auto_accept = true
+  peer_owner_id = "018274991670"
+  peer_vpc_id = "vpc-5b49433e"
+  vpc_id = "${aws_vpc.default.id}"
+  auto_accept = true
 }
 
 resource "aws_route" "peering-route-1a" {
