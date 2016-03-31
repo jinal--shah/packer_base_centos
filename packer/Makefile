@@ -60,7 +60,7 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 	  then echo "[INFO] Found sshkey creating symlink: ~/.ssh/$(SSH_PRIVATE_KEY_FILE)"; \
 	    ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE); \
 	else \
-          echo "\033[0;31m[ERROR] Create a copy of sshkey in current directory (or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\n"; exit 1; \
+          echo "\033[0;31m[ERROR] Create a copy of sshkey in current directory (or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n"; exit 1; \
 	fi;
 
 .PHONY: validate
