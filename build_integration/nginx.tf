@@ -24,7 +24,7 @@ variable "asg_desired_nginx" {
 # Create ASG & Launchconfig
 #################################################
 resource "aws_autoscaling_group" "nginx" {
-  name = "${var.tag_project}-${var.tag_environment}-asg"
+  name = "${var.tag_project}-${var.tag_environment}-nginx"
   max_size = "${var.asg_max_nginx}"
   min_size = "${var.asg_min_nginx}"
   desired_capacity = "${var.asg_desired_nginx}"
@@ -35,7 +35,7 @@ resource "aws_autoscaling_group" "nginx" {
   load_balancers = ["${aws_elb.nginx.name}"]
   tag {
     key = "Name"
-    value = "${var.tag_project}-${var.tag_environment}-asg"
+    value = "${var.tag_project}-${var.tag_environment}-nginx"
     propagate_at_launch = "true"
   }
   tag {
@@ -66,7 +66,7 @@ resource "aws_autoscaling_group" "nginx" {
 }
 
 resource "aws_launch_configuration" "nginx" {
-  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig"
+  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-nginx"
   image_id = "${var.ami_nginx}"
   instance_type = "${var.instance_type_nginx}"
   associate_public_ip_address = true
@@ -79,7 +79,7 @@ resource "aws_launch_configuration" "nginx" {
 # Security Group HTTP, MySQL and SSH access
 #################################################
 resource "aws_security_group" "nginx" {
-  name = "${var.tag_project}-${var.tag_environment}-sg"
+  name = "${var.tag_project}-${var.tag_environment}-nginx"
   description = "{var.tag_project}-${var.tag_environment}-sg"
   vpc_id = "${aws_vpc.default.id}"
 
@@ -95,6 +95,14 @@ resource "aws_security_group" "nginx" {
   ingress {
     from_port = 80
     to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  # HTTP access
+  ingress {
+    from_port = 8080
+    to_port = 8080
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }

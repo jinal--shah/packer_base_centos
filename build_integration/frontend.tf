@@ -31,8 +31,8 @@ resource "aws_elb" "frontend" {
     Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
     Service     = "${var.tag_service}"
+    Role        = "elb"
   }
 }
 
@@ -63,6 +63,31 @@ resource "aws_autoscaling_group" "frontend" {
   tag {
     key = "Name"
     value = "${var.tag_project}-${var.tag_environment}-asg-frontend"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Environment"
+    value = "${var.tag_environment}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Project"
+    value = "${var.tag_project}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Service"
+    value = "${var.tag_service}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Creator"
+    value = "${var.tag_creator}"
+    propagate_at_launch = "true"
+  }
+  tag {
+    key = "Department"
+    value = "${var.tag_department}"
     propagate_at_launch = "true"
   }
   depends_on = ["aws_instance.amq"]
@@ -119,10 +144,11 @@ resource "aws_security_group" "frontend" {
   }
 
   tags {
+    Creator     = "${var.tag_creator}"
+    Department  = "${var.tag_department}"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
-    Creator     = "${var.tag_creator}"
+    Role        = "security"
   }
 }
