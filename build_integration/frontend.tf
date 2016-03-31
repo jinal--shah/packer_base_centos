@@ -108,7 +108,7 @@ resource "aws_launch_configuration" "frontend" {
 #################################################
 resource "aws_security_group" "frontend" {
   name = "${var.tag_project}-${var.tag_environment}-frontend"
-  description = "{var.tag_project}-${var.tag_environment}"
+  description = "${var.tag_project}-${var.tag_environment}"
   vpc_id = "${aws_vpc.default.id}"
 
   # SSH access

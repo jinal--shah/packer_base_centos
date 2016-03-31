@@ -80,7 +80,7 @@ resource "aws_launch_configuration" "nginx" {
 #################################################
 resource "aws_security_group" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-nginx"
-  description = "{var.tag_project}-${var.tag_environment}-sg"
+  description = "${var.tag_project}-${var.tag_environment}-sg"
   vpc_id = "${aws_vpc.default.id}"
 
   # SSH access

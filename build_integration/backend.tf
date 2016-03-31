@@ -30,7 +30,7 @@ resource "aws_route53_record" "amq" {
 # AMQ Security group
 resource "aws_security_group" "amq" {
   name = "${var.tag_project}-${var.tag_environment}-amq"
-  description = "{var.tag_project}-${var.tag_environment}"
+  description = "${var.tag_project}-${var.tag_environment}"
   vpc_id = "${aws_vpc.default.id}"
 
   # SSH access
@@ -208,7 +208,7 @@ resource "aws_launch_configuration" "backend" {
 #################################################
 resource "aws_security_group" "backend" {
   name = "${var.tag_project}-${var.tag_environment}-backend"
-  description = "{var.tag_project}-${var.tag_environment}"
+  description = "${var.tag_project}-${var.tag_environment}"
   vpc_id = "${aws_vpc.default.id}"
 
   # SSH access
