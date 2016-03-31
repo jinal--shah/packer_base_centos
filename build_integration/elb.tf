@@ -45,7 +45,7 @@ resource "aws_elb" "nginx" {
 
 
 resource "aws_security_group" "elb" {
-  name = "${var.tag_project}-${var.tag_environment}-nginx"
+  name = "${var.tag_project}-${var.tag_environment}-elb"
   description = "Security Group for Nginx ELB"
   vpc_id = "${aws_vpc.default.id}"
 
