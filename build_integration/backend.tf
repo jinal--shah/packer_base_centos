@@ -111,7 +111,7 @@ resource "aws_elb" "backend" {
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 80
+    instance_port = 8080
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -217,14 +217,6 @@ resource "aws_security_group" "backend" {
     to_port = 22
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
-  }
-
-  # MySQL access
-  ingress {
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = ["${var.db_vpc_cidr}"]
   }
 
   # HTTP access
