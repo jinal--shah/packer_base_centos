@@ -73,6 +73,8 @@ resource "aws_launch_configuration" "nginx" {
   security_groups = ["${aws_security_group.nginx.id}"]
 #  user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
+  ## Nginx requires resolvable dns entries to start service
+  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend"]
 }
 
 #################################################
