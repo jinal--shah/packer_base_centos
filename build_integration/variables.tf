@@ -70,7 +70,6 @@ variable "asg_desired" {
 variable "tag_environment" {}
 variable "tag_project" {}
 variable "tag_service" {}
-variable "tag_role" {}
 variable "tag_creator" {}
 
 # REQUIRED FOR PEERING TO ADMIN VPC - START
