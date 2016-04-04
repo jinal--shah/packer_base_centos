@@ -52,7 +52,7 @@ resource "aws_db_instance" "default" {
 
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db"
+    Name        = "${var.tag_service}-${var.tag_environment}-db"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
