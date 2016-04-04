@@ -22,6 +22,7 @@ PUPPET_BRANCH?=enovation
 PUPPET_DIR?=puppet
 PUPPET_ENVIRONMENT?=integration
 PUPPET_SERVICE?=enovation
+PUPPET_PRODUCT?=enovation
 
 PACKER?=$(shell which packer)
 PACKER_DEBUG?=#-debug
@@ -42,6 +43,7 @@ VARS=-var 'base_ami=$(BASE_AMI)' \
      -var 'puppet_environment=$(PUPPET_ENVIRONMENT)' \
      -var 'puppet_role=$(ROLE)' \
      -var 'puppet_repo=$(PUPPET_REPO)' \
+     -var 'puppet_product=$(PUPPET_PRODUCT)' \
      -var 'puppet_service=$(PUPPET_SERVICE)' \
      -var 'aws_access_key=$(AWS_ACCESS_KEY)' \
      -var 'aws_secret_key=$(AWS_SECRET_KEY)' 
