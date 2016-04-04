@@ -87,6 +87,7 @@
     {
       "type": "shell",
       "inline": [
+        "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi",
         "sudo rm -rf /tmp/puppet || true",
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
