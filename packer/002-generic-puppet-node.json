@@ -48,7 +48,6 @@
         "CodeBranch": "{{user `code_branch`}}",
         "BuildId": "{{user `build_id`}}",
 	"BaseAmi": "{{user `base_ami`}}"
-
       }
     } 
   ],

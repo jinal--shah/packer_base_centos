@@ -80,8 +80,8 @@ resource "aws_subnet" "eu-west-1a-public" {
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "subnet"
   }
 }
 resource "aws_subnet" "eu-west-1b-public" {
