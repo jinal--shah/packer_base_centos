@@ -7,18 +7,18 @@ aws_region="eu-west-1"
 
 account="Booking_Microservice"
 tag_environment="example"
-tag_project="booking"
-tag_service="booking"
+tag_project="payments"
+tag_service="payments"
 tag_creator="terraform"
 tag_servicecriticality="medium"
 tag_supportcontact="Digital Systems"
 tag_department="Digital Systems"
 
-vpc_cidr="10.180.122.0/24"
-public_subnet_cidr_1a="10.180.122.128/26"
-public_subnet_cidr_1b="10.180.122.192/26"
-private_subnet_cidr_1a="10.180.122.0/26"
-private_subnet_cidr_1b="10.180.122.64/26"
+vpc_cidr="10.180.123.0/24"
+public_subnet_cidr_1a="10.180.123.128/26"
+public_subnet_cidr_1b="10.180.123.192/26"
+private_subnet_cidr_1a="10.180.123.0/26"
+private_subnet_cidr_1b="10.180.123.64/26"
 
 ami_nginx="ami-8b2099f8"
 ami_appserver="ami-8b2099f8"
@@ -42,4 +42,4 @@ asg_desired_nginx="2"
 
 domain="trainz.io" #use "eurostar.com" for production
 #snap_cname="snap-integration" #Only need to set this for prod
-snap_cname="example-booking"
+snap_cname="example-payments"
