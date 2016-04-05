@@ -1,0 +1,45 @@
+# terraform.tfvars
+aws_key_name="eurostar"
+aws_key_path="~/.ssh/eurostar.pem"
+aws_access_key=""
+aws_secret_key=""
+aws_region="eu-west-1"
+
+account="Booking_Microservice"
+tag_environment="example"
+tag_project="booking"
+tag_service="booking"
+tag_creator="terraform"
+tag_servicecriticality="medium"
+tag_supportcontact="Digital Systems"
+tag_department="Digital Systems"
+
+#vpc_cidr="10.180.121.0/24"
+#public_subnet_cidr_1a="10.180.121.128/26"
+#public_subnet_cidr_1b="10.180.121.192/26"
+#private_subnet_cidr_1a="10.180.121.0/26"
+#private_subnet_cidr_1b="10.180.121.64/26"
+
+ami_nginx="ami-8b2099f8"
+ami_appserver="ami-8b2099f8"
+ami_amq="ami-c849f6bb"
+
+buildnum="11"
+vpc_domain_name=""
+peer_owner_id="018274991670"
+domain_name_servers="AmazonProvidedDNS"
+#db_vpc_id="vpc-5b49433e"
+#db_vpc_cidr="10.38.120.0/26"
+
+# Extras
+certificate="STAR.trainz.io" #Used by ELB for https certificate
+account_id="018274991670" #Used by ELB for https certificate
+
+instance_type_ngin="t2.micro"
+asg_min_nginx="2"
+asg_max_nginx="3"
+asg_desired_nginx="2"
+
+domain="trainz.io" #use "eurostar.com" for production
+#snap_cname="snap-integration" #Only need to set this for prod
+snap_cname="example-booking"
