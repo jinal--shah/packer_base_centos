@@ -77,8 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "backend-cpu" {
 
 resource "aws_autoscaling_notification" "backend" {
   group_names = [
-    "${aws_autoscaling_group.backend.name}",
-    "${aws_autoscaling_group.backend.name}",
+    "${aws_autoscaling_group.backend.name}"
   ]
   notifications  = [
     "autoscaling:EC2_INSTANCE_LAUNCH", 

@@ -23,6 +23,19 @@ variable "asg_desired_nginx" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
+resource "aws_autoscaling_notification" "nginx" {
+  group_names = [
+    "${aws_autoscaling_group.nginx.name}"
+  ]
+  notifications  = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+  ]
+  topic_arn = "${aws_sns_topic.booking.arn}"
+}
+
 resource "aws_autoscaling_group" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-nginx"
   max_size = "${var.asg_max_nginx}"
