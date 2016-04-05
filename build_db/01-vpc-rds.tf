@@ -111,7 +111,7 @@ resource "aws_security_group" "default" {
 #################################################
 # Subnet Group
 resource "aws_db_subnet_group" "default" {
-  name = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sng"
+  name = "${var.tag_service}-${var.tag_environment}-db-sng"
   description = "${var.tag_project}-${var.tag_environment} DB subnet group"
   subnet_ids = [
     "${aws_subnet.db-private-subnet-1a.id}",

@@ -3,7 +3,7 @@
 #################################################
 # DB Parameter Group
 resource "aws_db_parameter_group" "default" {
-  name  = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-${var.db_instance_count}-pg"
+  name  = "${var.tag_service}-${var.tag_environment}-db-${var.db_instance_count}-pg"
   family = "mysql5.6"
   description = "${var.tag_project}-${var.tag_environment} DB parameter group"
 
