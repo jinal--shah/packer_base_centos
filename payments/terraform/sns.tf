@@ -8,7 +8,7 @@ resource "aws_sns_topic" "payments" {
 # Manually add email addresses for notifications: https://eu-west-1.console.aws.amazon.com/sns
 #https://www.terraform.io/docs/providers/aws/r/sns_topic_subscription.html
 #These are unsupported because the endpoint needs to be authorized and does not generate an ARN until the target email address has been validated. This breaks the Terraform model and as a result are not currently supported.
-#resource "aws_sns_topic_subscription" "payments_sqs_target" {
+#resource "aws_sns_topic_subscription" "payments_target" {
 #  topic_arn = "${aws_sns_topic.payments.arn}"
 #  protocol  = "email"
 #  endpoint  = "${var.notification_email_addresses}"
