@@ -14,7 +14,7 @@ resource "aws_vpc" "default" {
   enable_dns_support = true
   enable_dns_hostnames = true
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-vpc"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-vpc"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -32,7 +32,7 @@ resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-igw"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-igw"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -53,7 +53,7 @@ resource "aws_subnet" "db-private-subnet-1a" {
   availability_zone = "eu-west-1a"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-private-subnet-1a"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-private-subnet-1a"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -72,7 +72,7 @@ resource "aws_subnet" "db-private-subnet-1b" {
   availability_zone = "eu-west-1b"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-private-subnet-1b"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-private-subnet-1b"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -88,12 +88,12 @@ resource "aws_subnet" "db-private-subnet-1b" {
 #################################################
 # Security Group
 resource "aws_security_group" "default" {
-  name = "${var.tag_project}-${var.tag_environment}-db-sg"
+  name = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sg"
   description = "${var.tag_project}-${var.tag_environment}-db-security group"
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-sg"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sg"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -111,7 +111,7 @@ resource "aws_security_group" "default" {
 #################################################
 # Subnet Group
 resource "aws_db_subnet_group" "default" {
-  name = "${var.tag_project}-${var.tag_environment}-db-sng"
+  name = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sng"
   description = "${var.tag_project}-${var.tag_environment} DB subnet group"
   subnet_ids = [
     "${aws_subnet.db-private-subnet-1a.id}",
@@ -119,7 +119,7 @@ resource "aws_db_subnet_group" "default" {
   ]
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-sng"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sng"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"

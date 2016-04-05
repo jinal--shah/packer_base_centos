@@ -3,7 +3,7 @@
 #################################################
 # DB Parameter Group
 resource "aws_db_parameter_group" "default" {
-  name  = "${var.tag_project}-${var.tag_environment}-db-${var.db_instance_count}-pg"
+  name  = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-${var.db_instance_count}-pg"
   family = "mysql5.6"
   description = "${var.tag_project}-${var.tag_environment} DB parameter group"
 
@@ -13,7 +13,7 @@ resource "aws_db_parameter_group" "default" {
   }
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-db-pg"
+    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-pg"
     Build       = "Automatic"
     Creator     = "${var.tag_creator}"
     Department  = "${var.tag_department}"
@@ -37,8 +37,8 @@ resource "aws_db_instance" "default" {
   db_subnet_group_name        = "${aws_db_subnet_group.default.id}"
   engine                      = "mysql"
   engine_version              = "5.6.22"
-  final_snapshot_identifier   = "${var.tag_project}-${var.tag_environment}-db${var.db_instance_count}-final"
-  identifier                  = "${var.tag_project}-${var.tag_environment}-db${var.db_instance_count}-id"
+  final_snapshot_identifier   = "${var.tag_project}-${var.tag_service}-${var.tag_environment}-db${var.db_instance_count}-final"
+  identifier                  = "${var.tag_project}-${var.tag_service}-${var.tag_environment}-db${var.db_instance_count}-id"
   instance_class              = "${var.db_instance_class}"
   multi_az                    = "${var.db_multi_az}"
   name                        = "${var.database_name}"
