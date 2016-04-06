@@ -1,8 +1,12 @@
 # General
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
-variable "aws_key_path" {}
-variable "aws_key_name" {}
+variable "aws_key_path" {
+  default = "~/.ssh/eurostar.pem"
+}
+variable "aws_key_name" {
+  default = "eurostar"
+}
 
 variable "region" {
     description = "EC2 Region for the VPC"
@@ -113,7 +117,9 @@ variable "route-table-adminvpn-unknown3" {
 
 #var.tag_servicecriticality {}
 #var.tag_supportcontact {}
-variable "tag_department" {}
+variable "tag_department" {
+  default = "Digital Systems"
+}
 variable "tag_environment" {}
 
 # REQUIRED FOR PEERING TO ELK VPC - START
@@ -135,7 +141,9 @@ variable "route-table-elk" {
   default = "rtb-d66974b3"
 }
 
-variable "domain_name_servers" {}
+variable "domain_name_servers" {
+  default = "AmazonProvidedDNS"
+}
 
 variable "db_vpc_cidr" {}
 
@@ -152,7 +160,7 @@ variable "aws_route53_zone" {
 #  default = "Z2GNWE02RWX8RO" #prod.aws.trainz.io.
 }
 
-variable "snap_cname" {
-  description = "cname for main elb endpoint snap_cname+tag_environment"
+variable "endpoint_cname" {
+  description = "cname for main elb endpoint endpoint_cname+tag_environment"
   default = "snap"
 }
