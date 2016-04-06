@@ -23,15 +23,26 @@ variable "aws_nat_ami" {
     }
 }
 
-#variable "db_vpc_id" {}
+variable "db_vpc_id" {
+    default = "vpc-5b49433e"
+}
 #variable "db-endpoint" {}
-#variable "db_vpc_cidr" {}
+variable "db_vpc_cidr" {}
 
 #variable "ami_frontend" {}
 variable "ami_appserver" {}
 #variable "ami_amq" {}
 
 variable "vpc_cidr" {}
+
+variable "peer_owner_id" {
+    default = "018274991670"
+}
+variable "db_route_table_id" {
+    default = "rtb-e037ce84"
+
+}
+
 
 variable "public_subnet_cidr_1a" {}
 variable "public_subnet_cidr_1b" {}
