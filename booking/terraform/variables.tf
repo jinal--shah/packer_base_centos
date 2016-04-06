@@ -1,8 +1,12 @@
 # General
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
-variable "aws_key_path" {}
-variable "aws_key_name" {}
+variable "aws_key_path" {
+  default = "~/.ssh/eurostar.pem"
+}
+variable "aws_key_name" {
+  default = "eurostar.pem"
+}
 
 variable "region" {
     description = "EC2 Region for the VPC"
@@ -67,7 +71,6 @@ variable "asg_desired" {
 variable "tag_environment" {}
 variable "tag_project" {}
 variable "tag_service" {}
-variable "tag_role" {}
 variable "tag_creator" {}
 
 # REQUIRED FOR PEERING TO ADMIN VPC - START
@@ -111,7 +114,9 @@ variable "route-table-adminvpn-unknown3" {
 
 #var.tag_servicecriticality {}
 #var.tag_supportcontact {}
-variable "tag_department" {}
+variable "tag_department" {
+  default = "Digital Systems"
+}
 variable "tag_environment" {}
 
 # REQUIRED FOR PEERING TO ELK VPC - START
@@ -133,7 +138,9 @@ variable "route-table-elk" {
   default = "rtb-d66974b3"
 }
 
-variable "domain_name_servers" {}
+variable "domain_name_servers" {
+  default = "AmazonProvidedDNS"
+}
 
 
 # REQUIRED FOR PEERING TO ELK VPC - END
