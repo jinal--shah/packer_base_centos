@@ -15,7 +15,7 @@ resource "aws_route53_zone" "main" {
 }
 
 resource "aws_route53_zone" "int" {
-  name = "${var.buildnum}-eno.${var.domain}"
+  name = "${var.buildnum}-${var.tag_project}-${var.tag_environment}.${var.domain}"
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
