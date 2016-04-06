@@ -15,8 +15,8 @@ resource "aws_vpc_peering_connection" "admin" {
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
-    Role        = "${var.tag_role}"
     Creator     = "${var.tag_creator}"
+    Role        = "Network"
   }
 }
 
