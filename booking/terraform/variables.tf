@@ -5,7 +5,7 @@ variable "aws_key_path" {
   default = "~/.ssh/eurostar.pem"
 }
 variable "aws_key_name" {
-  default = "eurostar.pem"
+  default = "eurostar"
 }
 
 variable "region" {
