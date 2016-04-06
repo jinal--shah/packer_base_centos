@@ -23,6 +23,19 @@ variable "asg_desired_nginx" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
+resource "aws_autoscaling_notification" "nginx" {
+  group_names = [
+    "${aws_autoscaling_group.nginx.name}"
+  ]
+  notifications  = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+  ]
+  topic_arn = "${aws_sns_topic.enovation.arn}"
+}
+
 resource "aws_autoscaling_group" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-nginx"
   max_size = "${var.asg_max_nginx}"
@@ -33,6 +46,8 @@ resource "aws_autoscaling_group" "nginx" {
 #  vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a-public.id}","${aws_subnet.eu-west-1b-public.id}"]
   load_balancers = ["${aws_elb.nginx.name}"]
+  ## Nginx requires resolvable dns entries to start service
+  depends_on = ["aws_route53_record.elb-backend"]
   tag {
     key = "Name"
     value = "${var.tag_project}-${var.tag_environment}-nginx"
@@ -74,7 +89,7 @@ resource "aws_launch_configuration" "nginx" {
 #  user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
   ## Nginx requires resolvable dns entries to start service
-  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend"]
+#  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend"]
 }
 
 #################################################

@@ -1,104 +1,4 @@
 #################################################
- # EC2 -ActiveMQ
-resource "aws_instance" "amq" {
-  ami = "${var.ami_amq}"
-  instance_type = "${var.instance_type}"
-  key_name = "${var.aws_key_name}"
-  subnet_id = "${aws_subnet.eu-west-1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.amq.id}"]
-
-  tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-amq"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Service     = "${var.tag_service}"
-    Role        = "amq"
-  }
-}
-
-resource "aws_route53_record" "amq" {
-   zone_id = "${aws_route53_zone.int.id}"
-   name = "mq1"
-   type = "A"
-   ttl = "60"
-   records = ["${aws_instance.amq.private_ip}"]
-}
-
-################################################
-# AMQ Security group
-resource "aws_security_group" "amq" {
-  name = "${var.tag_project}-${var.tag_environment}-amq"
-  description = "${var.tag_project}-${var.tag_environment}"
-  vpc_id = "${aws_vpc.default.id}"
-
-  # SSH access
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["10.0.0.0/8"]
-  }
-
-  # AMQ access
-  ingress {
-    from_port = 61616
-    to_port = 61616
-    protocol = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
-  }
-
-  # ICMP
-  ingress {
-    from_port = -1
-    to_port = -1
-    protocol = "icmp"
-    cidr_blocks = ["10.0.0.0/8"]
-  }
-
-  # outbound internet access
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags {
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Service     = "${var.tag_service}"
-    Role        = "security"
-  }
-}
-
-
-#################################################
-# DHCP Options
-resource "aws_vpc_dhcp_options" "default" {
-  domain_name = "${aws_route53_zone.int.name}"
-  domain_name_servers = ["${var.domain_name_servers}"]
-
-  tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-dopt"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Service     = "${var.tag_service}"
-  }
-}
-
-resource "aws_vpc_dhcp_options_association" "default" {
-  vpc_id = "${aws_vpc.default.id}"
-  dhcp_options_id = "${aws_vpc_dhcp_options.default.id}"
-}
-
-#################################################
 # ELB
 resource "aws_elb" "backend" {
   name = "${var.tag_project}-${var.tag_environment}-BACK"
@@ -151,11 +51,48 @@ resource "aws_route53_record" "elb-backend" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
+resource "aws_autoscaling_policy" "backend" {
+  name = "${var.tag_project}-${var.tag_environment}-BACK"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.backend.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "backend-cpu" {
+  alarm_name = "${var.tag_project}-${var.tag_environment}-backend-cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "3"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.backend.name}"
+  }
+  alarm_description = "This metric monitor ec2 cpu utilization"
+  alarm_actions = ["${aws_autoscaling_policy.backend.arn}"]
+}
+
+resource "aws_autoscaling_notification" "backend" {
+  group_names = [
+    "${aws_autoscaling_group.backend.name}"
+  ]
+  notifications  = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+  ]
+  topic_arn = "${aws_sns_topic.enovation.arn}"
+}
+
 resource "aws_autoscaling_group" "backend" {
   name = "${var.tag_project}-${var.tag_environment}-backend"
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
-  desired_capacity = "${var.asg_desired}"
+#  desired_capacity = "${var.asg_desired}"
   force_delete = true
   launch_configuration = "${aws_launch_configuration.backend.name}"
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
