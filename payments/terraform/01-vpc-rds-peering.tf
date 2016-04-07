@@ -17,8 +17,14 @@ resource "aws_route" "peering-route-1b" {
   vpc_peering_connection_id = "${aws_vpc_peering_connection.db.id}"
 }
 
-resource "aws_route" "db-peering" {
+resource "aws_route" "db-peering-private" {
   route_table_id = "${aws_route_table.private.id}"
+  destination_cidr_block = "${var.db_vpc_cidr}"
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.db.id}"
+}
+
+resource "aws_route" "db-peering-public" {
+  route_table_id = "${aws_route_table.public.id}"
   destination_cidr_block = "${var.db_vpc_cidr}"
   vpc_peering_connection_id = "${aws_vpc_peering_connection.db.id}"
 }
