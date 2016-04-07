@@ -91,6 +91,7 @@
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
         "sudo rm -rf /var/tmp/* || true",
+        "sudo rm -rf /home/ec2-user/eif_puppet* /home/ec2-user/puppet-rsyslog-eif || true",
         "sudo touch /packed-by-packer-{{timestamp}}"
       ]
     }
