@@ -151,10 +151,6 @@ resource "aws_route_table" "private" {
       cidr_block = "${var.cidr-elk}"
       nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
   }
-  route {
-    cidr_block = "${var.db_vpc_cidr}"
-    nat_gateway_id = "${aws_vpc_peering_connection.db.id}"
-  }
   tags {
     Name        = "${var.tag_project}-rtb-private"
     Environment = "${var.tag_environment}"
@@ -186,14 +182,9 @@ resource "aws_route_table" "public" {
       cidr_block = "${var.cidr-admin}"
       nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
   }
-
   route {
       cidr_block = "${var.cidr-elk}"
       nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
-  }
-  route {
-    cidr_block = "${var.db_vpc_cidr}"
-    nat_gateway_id = "${aws_vpc_peering_connection.db.id}"
   }
   tags {
     Name        = "${var.tag_project}-rtb-public"
