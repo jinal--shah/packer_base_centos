@@ -30,7 +30,7 @@ variable "aws_nat_ami" {
 variable "db_vpc_id" {
     default = "vpc-5b49433e"
 }
-#variable "db-endpoint" {}
+variable "db-endpoint" {}
 variable "db_vpc_cidr" {}
 
 #variable "ami_frontend" {}

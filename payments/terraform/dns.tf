@@ -29,10 +29,18 @@ resource "aws_route53_record" "endpoint" {
    records = ["${aws_elb.nginx.dns_name}"]
 }
 
-#resource "aws_route53_record" "database" {
-#   zone_id = "${aws_route53_zone.int.id}"
-#   name = "database"
-#   type = "CNAME"
-#   ttl = "60"
-#   records = ["${var.db-endpoint}"]
-#}
+resource "aws_route53_record" "database" {
+   zone_id = "${aws_route53_zone.int.id}"
+   name = "database"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${var.db-endpoint}"]
+}
+
+resource "aws_route53_record" "database" {
+   zone_id = "${aws_route53_zone.int.id}"
+   name = "database"
+   type = "CNAME"
+   ttl = "60"
+   records = ["${var.db-endpoint}"]
+}
