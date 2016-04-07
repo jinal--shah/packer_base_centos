@@ -13,7 +13,9 @@ variable "region" {
     default = "eu-west-1"
 }
 
-variable "peer_owner_id" {}
+variable "db_route_table_id" {
+    default = "rtb-e037ce84"
+}
 
 variable "db_vpc_id" {}
 
