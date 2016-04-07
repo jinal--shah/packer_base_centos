@@ -8,15 +8,10 @@ output "vpc_id" {
 output "vpc_cidr" {
   value = "${var.vpc_cidr}"
 }
-# Outputs frontend
-output "asg_launchconfig_id" {
-  value = "${aws_launch_configuration.frontend.id}"
-}
-# Outputs backend
-output "asg_launchconfig_id" {
-  value = "${aws_launch_configuration.backend.id}"
+output "eip_nat_gateway" {
+  value = "${aws_eip.nat.public_ip}"
 }
 # Microservice
 output "main_mircoservice_endpoint" {
-  value = "${aws_route53_record.snap.fqdn}"
+  value = "${aws_route53_record.endpoint.fqdn}"
 }

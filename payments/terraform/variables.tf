@@ -35,7 +35,7 @@ variable "db_vpc_cidr" {}
 
 #variable "ami_frontend" {}
 variable "ami_appserver" {}
-#variable "ami_amq" {}
+variable "ami_amq" {}
 
 variable "vpc_cidr" {}
 
