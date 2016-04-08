@@ -54,17 +54,17 @@
 
   "provisioners": [
     {
+      "type": "file",
+      "source": "{{user `puppet_dir`}}",
+      "destination": "/tmp/"
+    },
+    {
       "type": "shell",
       "inline": [
-        "sudo yum install -y git && sudo ssh-keyscan -t rsa github.com|sudo tee -a /root/.ssh/known_hosts",
-        "cd /home/ec2-user && sudo -ttt git clone {{user `puppet_repo`}} --branch {{user `puppet_branch`}}",
-        "cd /home/ec2-user/eif_puppet && sudo -ttt /usr/local/bin/librarian-puppet clean && sudo -ttt /usr/local/bin/librarian-puppet install",
-        "cd /home/ec2-user/ && sudo -ttt git clone git@github.com:ivangutev/puppet-rsyslog-eif.git",
-        "cd /home/ec2-user/ && sudo -ttt rm -rf eif_puppet/modules/rsyslog/* && sudo -ttt cp -r puppet-rsyslog-eif/* eif_puppet/modules/rsyslog/",
-        "sudo rm -rf /etc/puppet && sudo cp -a /home/ec2-user/eif_puppet /etc/puppet && sudo chown -R puppet:puppet /etc/puppet"
+        "sudo rm -rf /etc/puppet",
+        "sudo cp -a /tmp/puppet /etc/puppet"
       ]
     },
-
     {
       "type": "puppet-masterless",
       "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} FACTER_operatingsystemmajrelease='6' sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
@@ -82,6 +82,8 @@
       	"secret_key": "{{user `aws_secret_key`}}"        
       },
       "manifest_file": "{{pwd}}/default.pp",
+      "staging_directory": "/tmp/puppet",
+      "working_directory": "/etc/puppet",
       "prevent_sudo": "false"
     },
     {

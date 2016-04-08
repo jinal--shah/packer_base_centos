@@ -19,6 +19,7 @@ SSH_USERNAME?=ec2-user
 
 ROLE?=app-server
 CODE_BRANCH?=enovation
+PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
 PUPPET_BRANCH?=enovation
 PUPPET_DIR?=puppet
 PUPPET_ENVIRONMENT?=integration
@@ -67,6 +68,13 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 	else \
           echo "\033[0;31m[ERROR] Create a copy of sshkey in current directory (or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n"; exit 1; \
 	fi;
+
+.PHONY: clone
+clone: ## Clone puppet repo
+	rm -rf puppet; \
+	git clone --branch $(PUPPET_BRANCH) $(PUPPET_REPO) puppet; \
+	cd puppet; \
+	librarian-puppet install;
 
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
