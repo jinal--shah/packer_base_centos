@@ -70,6 +70,7 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
+	$(eval BASE_AMI := $(shell cat base_ami.id))
 	packer validate \
 	  $(VAR_FILE) \
 	  $(VARS) \
@@ -82,6 +83,7 @@ base: ## Run packer build using defined variables to create patched base ami wit
 
 .PHONY: build 
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
+	$(eval BASE_AMI := $(shell cat base_ami.id))
 	packer build $(PACKER_DEBUG) \
 	  $(VAR_FILE) \
 	  $(VARS) \
@@ -98,5 +100,4 @@ baseami:
 	else \
 	  echo "$(BASE_AMI)" > base_ami.id; \
 	fi
-	$(eval BASE_AMI := $(shell cat base_ami.id))
 
