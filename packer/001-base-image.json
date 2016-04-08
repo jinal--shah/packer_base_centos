@@ -58,6 +58,12 @@
         "rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm",
         "yum install -y 'puppet-{{user `puppet_version`}}' rubygem-deep_merge python-setuptools",
         "yum clean all",
+        "groupadd --gid 500 ec2-user",
+        "useradd --gid 500 -G wheel ec2-user",
+        "mkdir /home/ec2-user/.ssh",
+        "cp /root/.ssh/authorized_keys /home/ec2-user/.ssh/authorized_keys",
+        "chown -R ec2-user:ec2-user /home/ec2-user/",
+        "sed -i 's/\\(^# \\)\\(%wheel.*NOPASSWD.*\\)/\\2/g' /etc/sudoers",
         "rm -rvf /root/.ssh/authorized_keys"
       ]
     }

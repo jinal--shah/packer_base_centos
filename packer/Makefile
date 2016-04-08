@@ -19,6 +19,7 @@ SSH_USERNAME?=ec2-user
 
 ROLE?=app-server
 CODE_BRANCH?=enovation
+PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
 PUPPET_BRANCH?=enovation
 PUPPET_DIR?=puppet
 PUPPET_ENVIRONMENT?=integration
@@ -68,6 +69,13 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
           echo "\033[0;31m[ERROR] Create a copy of sshkey in current directory (or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n"; exit 1; \
 	fi;
 
+.PHONY: clone
+clone: ## Clone puppet repo
+	rm -rf puppet; \
+	git clone --branch $(PUPPET_BRANCH) $(PUPPET_REPO) puppet; \
+	cd puppet; \
+	librarian-puppet install;
+
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
 	$(eval BASE_AMI := $(shell cat base_ami.id))
@@ -78,8 +86,8 @@ validate: sshkeyfile baseami ## Run packer validate using defined variables
 
 .PHONY: base
 base: ## Run packer build using defined variables to create patched base ami with puppet
-	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
-	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
+	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
+	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
 
 .PHONY: build 
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
