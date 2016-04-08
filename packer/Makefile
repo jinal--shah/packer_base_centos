@@ -1,7 +1,8 @@
 AWS_ACCESS_KEY?=
 AWS_SECRET_KEY?=
 AWS_REGION?=eu-west-1
-AWS_SOURCE_AMI?=
+## ami-30ff5c47 = Official CentOS6.x AMI
+AWS_SOURCE_AMI?=ami-30ff5c47
 AWS_INSTANCE_TYPE?=
 AWS_DEFAULT_REGION?=eu-west-1
 AWS_DEFAULT_PROFILE?=eurostar
@@ -9,7 +10,7 @@ AWS_DEFAULT_PROFILE?=eurostar
 BUILD_ID?=$(shell date +%s)
 BUILDER?=amazon-ebs
 SHELL?=/bin/bash
-BASE_AMI?=ami-a63d7ad1
+BASE_AMI?=
 BASE_DOMAIN?=local.
 
 SSH_KEYPAIR_NAME?=eurostar
@@ -45,12 +46,14 @@ VARS=-var 'base_ami=$(BASE_AMI)' \
      -var 'puppet_repo=$(PUPPET_REPO)' \
      -var 'puppet_product=$(PUPPET_PRODUCT)' \
      -var 'puppet_service=$(PUPPET_SERVICE)' \
+     -var 'base_image_source_ami=$(AWS_SOURCE_AMI)' \
+     -var 'ssh_username=$(SSH_USERNAME)' \
      -var 'aws_access_key=$(AWS_ACCESS_KEY)' \
      -var 'aws_secret_key=$(AWS_SECRET_KEY)' 
 
 
 .PHONY: help
-help:
+help: ## Run to show available make targets and descriptions
 	@echo [INFO] Packer - Available make targets and descriptions
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
@@ -66,16 +69,34 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 	fi;
 
 .PHONY: validate
-validate: sshkeyfile ## Run packer validate using defined variables
+validate: sshkeyfile baseami ## Run packer validate using defined variables
 	packer validate \
 	  $(VAR_FILE) \
 	  $(VARS) \
 	  "$(PACKER_TEMPLATE_PUPPET)"
 
+.PHONY: base
+base: ## Run packer build using defined variables to create patched base ami with puppet
+	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
+	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
+
 .PHONY: build 
-build: validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
+build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	packer build $(PACKER_DEBUG) \
 	  $(VAR_FILE) \
 	  $(VARS) \
 	  "$(PACKER_TEMPLATE_PUPPET)"
+
+SHELL=/bin/bash
+.PHONY: baseami
+baseami:
+	if [[ "x$(BASE_AMI)" == "x" ]]; then \
+	  aws ec2 describe-images \
+	    --filters 'Name=name,Values=eurostar-microservices-base-centos-6.x-puppet-3.8.2' \
+	    --query 'Images[*].{ID:ImageId}' --output text | \
+	    tee base_ami.id; \
+	else \
+	  echo "$(BASE_AMI)" > base_ami.id; \
+	fi
+	$(eval BASE_AMI := $(shell cat base_ami.id))
 

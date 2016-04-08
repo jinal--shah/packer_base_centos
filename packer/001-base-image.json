@@ -11,7 +11,7 @@
     "base_image_source_ami": "{{env `AWS_SOURCE_AMI`}}",
     "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
     "ssh_username": "{{env `SSH_USERNAME`}}",
-    "ami_name": "eurostar-base-centos-6.x-puppet-3.8.2",
+    "ami_name": "eurostar-microservices-base-centos-6.x-puppet-3.8.2",
     "ami_description": "Eurostar Base Centos-6.x Golden Image With Puppet-3.8.2 {{timestamp}}",
     "puppet_version": "3.8.2"
   },
@@ -37,12 +37,11 @@
       "tags": {
         "OS_Version": "Centos",
         "Release": "6.x",
-        "Maker": "Stuart",
         "Puppet": "{{user `puppet_version`}}",
         "BuildId": "{{user `build_id`}}",
-	"Project": "evo",
+	"Project": "microservices",
 	"Service": "base",
-	"Role": "evobase",
+	"Role": "base",
 	"Environment": "any",
 	"CodeBranch": "dev"
 
@@ -57,7 +56,6 @@
       "inline": [
         "yum upgrade --assumeyes",
         "rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm",
-        "#rpm -e --nodeps mysql-libs",
         "yum install -y 'puppet-{{user `puppet_version`}}' rubygem-deep_merge python-setuptools",
         "yum clean all",
         "rm -rvf /root/.ssh/authorized_keys"
