@@ -5,7 +5,7 @@
   "puppet_branch": "stable",
   "aws_access_key": "",
   "aws_secret_key": "",
-  "base_image_source_ami": "ami-a63d7ad1",
+  "base_image_source_ami": "",
   "xpuppet_source_ami": "eurostar-base-centos-6.x-puppet-3.8.2",
   "build_id": "{{timestamp}}",
   "aws_region": "eu-west-1",
