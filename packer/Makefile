@@ -78,8 +78,8 @@ validate: sshkeyfile baseami ## Run packer validate using defined variables
 
 .PHONY: base
 base: ## Run packer build using defined variables to create patched base ami with puppet
-	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
-	SSH_USERNAME=root PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
+	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
+	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
 
 .PHONY: build 
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
