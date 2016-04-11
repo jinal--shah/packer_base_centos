@@ -9,34 +9,22 @@ variable "aws_key_name" {
 }
 
 variable "region" {
-    description = "EC2 Region for the VPC"
-    default = "eu-west-1"
+  description = "EC2 Region for the VPC"
+  default = "eu-west-1"
 }
-
-variable "db_route_table_id" {
-    default = "rtb-e037ce84"
-}
-
-variable "db_vpc_id" {}
 
 variable "aws_region" {
-    description = "EC2 Region for the VPC"
-    default = "eu-west-1"
+  description = "EC2 Region for the VPC"
+  default = "eu-west-1"
 }
 
 variable "aws_nat_ami" {
-    default = {
-        eu-west-1 = "ami-c0993ab3"
-    }
+  default = {
+    eu-west-1 = "ami-c0993ab3"
+  }
 }
-
-variable "db-endpoint" {}
-
 variable "ami_frontend" {}
-
-
 variable "ami_appserver" {}
-
 variable "ami_amq" {}
 
 variable "vpc_cidr" {}
@@ -45,7 +33,6 @@ variable "public_subnet_cidr_1a" {}
 variable "public_subnet_cidr_1b" {}
 
 variable "private_subnet_cidr_1a" {}
-
 variable "private_subnet_cidr_1b" {}
 
 variable "availability_zones" {
@@ -54,7 +41,7 @@ variable "availability_zones" {
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t2.small"
   description = "AWS instance type"
 }
 
@@ -77,6 +64,12 @@ variable "tag_environment" {}
 variable "tag_project" {}
 variable "tag_service" {}
 variable "tag_creator" {}
+
+#var.tag_servicecriticality {}
+#var.tag_supportcontact {}
+variable "tag_department" {
+  default = "Digital Systems"
+}
 
 # REQUIRED FOR PEERING TO ADMIN VPC - START
 variable "peer_owner_id" {
@@ -115,15 +108,6 @@ variable "route-table-adminvpn-unknown3" {
 }
 # REQUIRED FOR PEERING TO ADMIN VPC - END
 
-# RDS variables
-
-#var.tag_servicecriticality {}
-#var.tag_supportcontact {}
-variable "tag_department" {
-  default = "Digital Systems"
-}
-variable "tag_environment" {}
-
 # REQUIRED FOR PEERING TO ELK VPC - START
 
 variable "peer_vpc_id_elk" {
@@ -147,9 +131,14 @@ variable "domain_name_servers" {
   default = "AmazonProvidedDNS"
 }
 
-variable "db_vpc_cidr" {}
-
 # REQUIRED FOR PEERING TO ELK VPC - END
+
+variable "db-endpoint" {}
+variable "db_vpc_id" {}
+variable "db_vpc_cidr" {}
+variable "db_route_table_id" {
+  default = "rtb-e037ce84"
+}
 
 
 variable "domain" {

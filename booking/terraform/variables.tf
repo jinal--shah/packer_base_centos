@@ -49,7 +49,7 @@ variable "availability_zones" {
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t2.small"
   description = "AWS instance type"
 }
 
