@@ -9,7 +9,7 @@
   "xpuppet_source_ami": "eurostar-base-centos-6.x-puppet-3.8.2",
   "build_id": "{{timestamp}}",
   "aws_region": "eu-west-1",
-  "aws_instance_type": "t2.micro",
+  "aws_instance_type": "t2.small",
   "ssh_username": "ec2-user",
   "puppet_dir": "puppet",
   "puppet_product": "enovation",
