@@ -11,7 +11,7 @@ resource "aws_elb" "frontend" {
   connection_draining = true
   cross_zone_load_balancing = true
   listener {
-    instance_port = 8080
+    instance_port = 7890
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
@@ -20,7 +20,7 @@ resource "aws_elb" "frontend" {
     healthy_threshold = 3
     unhealthy_threshold = 5
     timeout = 5
-    target = "TCP:8080"
+    target = "TCP:7890"
     interval = 30
   }
   security_groups = ["${aws_security_group.frontend.id}"]
@@ -121,8 +121,8 @@ resource "aws_security_group" "frontend" {
 
   # HTTP access
   ingress {
-    from_port = 8080
-    to_port = 8080
+    from_port = 7890
+    to_port = 7890
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }
