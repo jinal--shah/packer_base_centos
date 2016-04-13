@@ -23,6 +23,7 @@ private_subnet_cidr_1b="10.180.123.64/26"
 ami_nginx="ami-8b2099f8"
 ami_appserver="ami-8b2099f8"
 ami_amq="ami-c849f6bb"
+#ami_revacc=""
 
 buildnum="11"
 vpc_domain_name=""
