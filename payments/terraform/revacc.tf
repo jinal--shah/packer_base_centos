@@ -1,7 +1,7 @@
 variable "ami_revacc" {}
 
 variable "instance_type_revacc" {
-  default = "t2.small"
+  default = "t2.medium"
   description = "AWS instance type"
 }
 
@@ -104,7 +104,7 @@ resource "aws_autoscaling_notification" "revacc" {
     "${aws_autoscaling_group.revacc.name}"
   ]
   notifications  = [
-    "autoscaling:EC2_INSTANCE_LAUNCH", 
+    "autoscaling:EC2_INSTANCE_LAUNCH",
     "autoscaling:EC2_INSTANCE_TERMINATE",
     "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
