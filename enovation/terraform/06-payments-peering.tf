@@ -22,10 +22,3 @@ resource "aws_route" "peering-route-notifivation1b-to-vpc" {
   destination_cidr_block = "${var.vpc_cidr}"
   vpc_peering_connection_id = "${aws_vpc_peering_connection.payments.id}"
 }
-
-# Add Notification route to current VPCs Private route table
-resource "aws_route" "payments-peering-private" {
-  route_table_id = "${aws_route_table.private.id}"
-  destination_cidr_block = "${var.payments_vpc_cidr}"
-  vpc_peering_connection_id = "${aws_vpc_peering_connection.payments.id}"
-}
