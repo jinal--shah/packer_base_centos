@@ -47,7 +47,7 @@ resource "aws_autoscaling_group" "nginx" {
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a-public.id}","${aws_subnet.eu-west-1b-public.id}"]
   load_balancers = ["${aws_elb.nginx.name}"]
   ## Nginx requires resolvable dns entries to start service
-  depends_on = ["aws_route53_record.elb-backend"]
+  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend","aws_elb.backend","aws_elb.frontend"]
   tag {
     key = "Name"
     value = "${var.tag_project}-${var.tag_environment}-nginx"
