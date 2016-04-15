@@ -23,7 +23,7 @@ resource "aws_vpc_dhcp_options_association" "default" {
 # dns
 resource "aws_route53_record" "endpoint" {
    zone_id = "${var.aws_route53_zone}"
-   name = "${var.endpoint_cname}-${var.tag_environment}"
+   name = "${var.endpoint_cname}-${var.tag_environment}.snap-preprod.trainz.io"
    type = "CNAME"
    ttl = "60"
    records = ["${aws_elb.nginx.dns_name}"]
