@@ -10,10 +10,6 @@ provider "aws" {
 #################################################
 # VPC
 #################################################
-resource "aws_route53_zone" "main" {
-  name = "eno.trainz.io"
-}
-
 resource "aws_route53_zone" "int" {
   name = "${var.buildnum}-${var.tag_project}-${var.tag_environment}.${var.domain}"
   vpc_id = "${aws_vpc.default.id}"
