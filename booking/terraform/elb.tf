@@ -7,10 +7,9 @@ variable "certificate" {
 
 resource "aws_elb" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-MAIN"
-#  subnets = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
-  subnets = ["${aws_subnet.eu-west-1a-public.id}","${aws_subnet.eu-west-1b-public.id}"]
+  subnets = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
   security_groups = ["${aws_security_group.elb.id}"]
-  internal = false
+  internal = true
 
   listener {
     instance_port = 80
