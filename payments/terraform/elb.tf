@@ -5,10 +5,6 @@ variable "certificate" {
 # default = "wildcard.eurostar.com"
 }
 
-variable "account_id" {
-  default = "018274991670"
-}
-
 resource "aws_elb" "nginx" {
   name = "${var.tag_project}-${var.tag_environment}-MAIN"
 #  subnets = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
@@ -21,7 +17,7 @@ resource "aws_elb" "nginx" {
     instance_protocol = "http"
     lb_port = 443
     lb_protocol = "https"
-    ssl_certificate_id = "arn:aws:iam::${var.account_id}:server-certificate/${var.certificate}"
+    ssl_certificate_id = "arn:aws:iam::${var.peer_owner_id}:server-certificate/${var.certificate}"
   }
 
   health_check {
