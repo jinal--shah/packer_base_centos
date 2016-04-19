@@ -86,7 +86,7 @@ resource "aws_subnet" "eu-west-1b-public" {
   availability_zone = "eu-west-1b"
 
   tags {
-    Name        = "${var.tag_project}-${var.tag_environment}-public-subnet-1a"
+    Name        = "${var.tag_project}-${var.tag_environment}-public-subnet-1b"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"
@@ -182,7 +182,6 @@ resource "aws_route_table" "public" {
       cidr_block = "${var.cidr-admin}"
       nat_gateway_id = "${aws_vpc_peering_connection.admin.id}"
   }
-
   route {
       cidr_block = "${var.cidr-elk}"
       nat_gateway_id = "${aws_vpc_peering_connection.elk.id}"
@@ -199,5 +198,10 @@ resource "aws_route_table" "public" {
 
 resource "aws_route_table_association" "eu-west-1a-rta-public" {
     subnet_id = "${aws_subnet.eu-west-1a-public.id}"
+    route_table_id = "${aws_route_table.public.id}"
+}
+
+resource "aws_route_table_association" "eu-west-1b-rta-public" {
+    subnet_id = "${aws_subnet.eu-west-1b-public.id}"
     route_table_id = "${aws_route_table.public.id}"
 }
