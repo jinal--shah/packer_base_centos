@@ -9,7 +9,7 @@ AWS_DEFAULT_PROFILE?=eurostar
 
 BUILD_ID?=$(shell date +%s)
 BUILDER?=amazon-ebs
-SHELL?=/bin/bash
+SHELL=/bin/bash
 BASE_AMI?=
 BASE_DOMAIN?=local.
 
