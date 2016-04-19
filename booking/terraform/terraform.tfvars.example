@@ -33,7 +33,6 @@ domain_name_servers="AmazonProvidedDNS"
 
 # Extras
 certificate="STAR.trainz.io" #Used by ELB for https certificate
-account_id="018274991670" #Used by ELB for https certificate
 
 instance_type_nginx="t2.micro"
 asg_min_nginx="2"
