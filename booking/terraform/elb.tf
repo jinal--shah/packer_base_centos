@@ -14,9 +14,8 @@ resource "aws_elb" "nginx" {
   listener {
     instance_port = 80
     instance_protocol = "http"
-    lb_port = 443
-    lb_protocol = "https"
-    ssl_certificate_id = "arn:aws:iam::${var.peer_owner_id}:server-certificate/${var.certificate}"
+    lb_port = 80
+    lb_protocol = "http"
   }
 
   health_check {
@@ -46,8 +45,8 @@ resource "aws_security_group" "elb" {
 
   # HTTP access
   ingress {
-    from_port = 443
-    to_port = 443
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/8"]
   }
