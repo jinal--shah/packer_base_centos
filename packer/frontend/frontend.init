@@ -16,9 +16,9 @@ cmd="$ENV_VARS forever start -l /var/log/enovation_fe/forever.log -o /var/log/en
 user="root"
 
 name=`basename $0`
-pid_file="/var/run/$name.pid"
-stdout_log="/var/log/$name/$name.log"
-stderr_log="/var/log/$name/$name.err"
+pid_file="/var/run/enovation_fe.pid"
+stdout_log="/var/log/enovation_fe/.log"
+stderr_log="/var/log/enovation_fe/.err"
 
 get_pid() {
     cat "$pid_file"
@@ -28,7 +28,7 @@ is_running() {
     [ -f "$pid_file" ] && ps `get_pid` > /dev/null 2>&1
 }
 
-if [ ! -d /var/log/$name ]; then mkdir /var/log/$name && chown $user /var/log/$name; fi
+if [ ! -d /var/log/enovation_fe ]; then mkdir /var/log/enovation_fe && chown $user /var/log/enovation_fe; fi
 
 case "$1" in
     start)
@@ -36,9 +36,8 @@ case "$1" in
         echo "Already started: $pid_file(`get_pid`)"
     else
         echo "Starting $name"
-        cd "$dir"
         touch $pid_file && chown $user $pid_file
-        su - "$user" -c "$cmd >> $stdout_log 2>> $stderr_log & echo \$! > $pid_file"
+        su - "$user" -c "cd $dir && $cmd >> $stdout_log 2>> $stderr_log & echo \$! > $pid_file"
         if ! is_running; then
             echo "Unable to start, see $stdout_log and $stderr_log"
             exit 1
