@@ -122,7 +122,7 @@ resource "aws_subnet" "eu-west-1b" {
   availability_zone = "eu-west-1b"
 
   tags {
-    Name        = "${var.tag_project}-PrivateSubnet-1b"
+    Name        = "${var.tag_project}-${var.tag_environment}-private-subnet-1b"
     Environment = "${var.tag_environment}"
     Project     = "${var.tag_project}"
     Service     = "${var.tag_service}"

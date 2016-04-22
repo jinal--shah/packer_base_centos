@@ -20,7 +20,7 @@ resource "aws_elb" "backend" {
     healthy_threshold = 3
     unhealthy_threshold = 5
     timeout = 5
-    target = "HTTP:8080/swagger-ui.html"
+    target = "HTTP:8080/health"
     interval = 30
   }
   security_groups = ["${aws_security_group.backend.id}"]
