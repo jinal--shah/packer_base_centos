@@ -69,6 +69,11 @@
       "destination": "/tmp/alertlogic.sh"
     },
     {
+      "type": "file",
+      "source": "emon_bundle.tgz",
+      "destination": "/tmp/emon_bundle.tgz"
+    },
+    {
       "type": "shell",
       "inline": [
         "sudo rm -rf /etc/puppet",
@@ -106,6 +111,8 @@
 	"sudo yum-config-manager --enable eurostar_${S3_REPO_ENV:-prod}",
 	"sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
 	"sudo mkdir -p /etc/collectd.d",
+	"sudo tar -C /tmp -xzf /tmp/emon_bundle.tgz",
+	"sudo cp -r /tmp/emon_bundle/emon/* /",
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
         "sudo rm -rf /var/tmp/* || true",
