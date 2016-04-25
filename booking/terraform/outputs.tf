@@ -1,6 +1,6 @@
 # Microservice
 output "main_mircoservice_endpoint" {
-  value = "https://${aws_route53_record.endpoint.fqdn}"
+  value = "http://${aws_route53_record.endpoint.fqdn}"
 }
 # General
 output "region" {
