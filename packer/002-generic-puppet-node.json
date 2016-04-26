@@ -107,10 +107,10 @@
     },
     {
       "type": "shell",
-      "environment_vars": {
-        "AWS_ACCESS_KEY_ID": "{{user `aws_access_key`}}",
-        "AWS_SECRET_ACCESS_KEY": "{{user `aws_secret_key`}}"
-      },
+      "environment_vars": [
+        "AWS_ACCESS_KEY_ID={{user `aws_access_key`}}",
+        "AWS_SECRET_ACCESS_KEY={{user `aws_secret_key`}}"
+      ],
       "inline": [
         "if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
         "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
@@ -132,19 +132,19 @@
     {
       "type": "shell",
       "script": "scripts/create_eurostar_service_info.sh",
-      "environment_vars": {
-        "EUROSTAR_SERVICE_NAME": "{{user `eurostar_service_name`}}",
-        "EUROSTAR_SERVICE_ROLE": "{{user `eurostar_service_role`}}",
-        "EUROSTAR_RELEASE_VERSION": "{{user `eurostar_release_version`}}"
-      }
+      "environment_vars": [
+        "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
+        "EUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}",
+        "EUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}"
+      ]
     },
     {
       "type": "shell",
       "script": "scripts/create_remote_metrics_info.sh",
-      "environment_vars": {
-        "METRICS_REMOTE_HOST": "{{user `metrics_remote_host`}}",
-        "METRICS_REMOTE_PORT": "{{user `metrics_remote_port`}}"
-      }
+      "environment_vars": [
+        "METRICS_REMOTE_HOST={{user `metrics_remote_host`}}",
+        "METRICS_REMOTE_PORT={{user `metrics_remote_port`}}"
+      ]
     }
   ],
 
