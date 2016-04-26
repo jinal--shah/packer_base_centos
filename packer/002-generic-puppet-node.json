@@ -114,7 +114,7 @@
 	"sudo yum-config-manager --enable eurostar_prod",
 	"sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
 	"sudo mkdir -p /etc/collectd.d",
-        "sudo sed '/^# access_key/d; /^# secret_key/d' /etc/yum/pluginconf.d/cob.conf",
+        "sudo sed -i '/^# access_key/d; /^# secret_key/d' /etc/yum/pluginconf.d/cob.conf",
 	"sudo cp -r /tmp/emon/* /",
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
