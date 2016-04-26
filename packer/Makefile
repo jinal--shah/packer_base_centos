@@ -11,7 +11,7 @@ BUILD_ID?=$(shell date +%s)
 BUILDER?=amazon-ebs
 SHELL=/bin/bash
 BASE_AMI?=
-BASE_DOMAIN?=local.
+BASE_DOMAIN?=trainz.io
 
 SSH_KEYPAIR_NAME?=eurostar
 SSH_PRIVATE_KEY_FILE?=eurostar.pem
