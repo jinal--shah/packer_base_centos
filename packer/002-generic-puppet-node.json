@@ -8,6 +8,11 @@
     "aws_region": "{{env `AWS_REGION`}}",
     "base_ami": "{{env `BASE_AMI`}}",
     "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "eurostar_service_name": "{{env `EUROSTAR_SERVICE_NAME`}}",
+    "eurostar_service_role": "{{env `EUROSTAR_SERVICE_ROLE`}}",
+    "eurostar_release_version": "{{env `EUROSTAR_RELEASE_VERSION`}}",
+    "metrics_remote_host": "{{env `METRICS_REMOTE_HOST`}}",
+    "metrics_remote_port": "{{env `METRICS_REMOTE_PORT`}}",
     "ssh_username": "{{env `SSH_USERNAME`}}",
     "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
     "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
@@ -17,7 +22,6 @@
     "puppet_service": "{{env `PUPPET_SERVICE`}}",
     "base_domain": "{{env `BASE_DOMAIN`}}",
     "puppet_dir": "{{env `PUPPET_DIR`}}"
-
   },
   "builders": [
     {
@@ -47,7 +51,7 @@
         "BaseDomain": "{{user `base_domain`}}",
         "CodeBranch": "{{user `code_branch`}}",
         "BuildId": "{{user `build_id`}}",
-	"BaseAmi": "{{user `base_ami`}}"
+        "BaseAmi": "{{user `base_ami`}}"
       }
     } 
   ],
@@ -93,8 +97,8 @@
         "base_domain": "{{user `base_domain`}}",
         "service": "{{user `puppet_service`}}",
         "env": "{{user `puppet_environment`}}",
-      	"access_key": "{{user `aws_access_key`}}",
-      	"secret_key": "{{user `aws_secret_key`}}"        
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}"        
       },
       "manifest_file": "{{pwd}}/default.pp",
       "staging_directory": "/tmp/puppet",
@@ -107,19 +111,24 @@
         "if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
         "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi",
-	"sudo tar -C /tmp -xzf /tmp/emon_bundle.tgz",
-	"sudo cp -r /tmp/emon/* /",
-	"sudo yum install yum-utils cloud-init",
-	"sudo yum-config-manager --enable eurostar_prod",
-	"sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
-	"sudo mkdir -p /etc/collectd.d",
-	"sudo cp -r /tmp/emon/* /",
+        "sudo tar -C /tmp -xzf /tmp/emon_bundle.tgz",
+        "sudo cp -r /tmp/emon/* /",
+        "sudo yum install yum-utils cloud-init",
+        "sudo yum-config-manager --enable eurostar_prod",
+        "sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
+        "sudo mkdir -p /etc/collectd.d",
+        "sudo cp -r /tmp/emon/* /",
+        "sudo echo -e \"EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}\\nEUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}\\nEUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}\\n\">/etc/eurostar_service_info",
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
         "sudo rm -rf /var/tmp/* || true",
         "sudo rm -rf /home/ec2-user/eif_puppet* /home/ec2-user/puppet-rsyslog-eif || true",
         "sudo touch /packed-by-packer-{{timestamp}}"
       ]
+    },
+    {
+      "type": "shell",
+      "script": 
     }
   ],
 
