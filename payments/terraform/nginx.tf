@@ -81,7 +81,7 @@ resource "aws_autoscaling_group" "nginx" {
 }
 
 resource "aws_launch_configuration" "nginx" {
-  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-nginx"
+  name_prefix = "${var.tag_project}-${var.tag_environment}-LC-nginx-"
   image_id = "${var.ami_nginx}"
   instance_type = "${var.instance_type_nginx}"
   lifecycle { create_before_destroy = true }
