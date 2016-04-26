@@ -95,7 +95,7 @@ resource "aws_autoscaling_group" "frontend" {
 }
 
 resource "aws_launch_configuration" "frontend" {
-  name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-frontend"
+  name_prefix = "${var.tag_project}-${var.tag_environment}-LC-frontend-"
   image_id = "${var.ami_frontend}"
   instance_type = "${var.instance_type}"
   lifecycle { create_before_destroy = true }
