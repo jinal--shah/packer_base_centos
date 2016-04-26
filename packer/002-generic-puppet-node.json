@@ -1,7 +1,7 @@
 {
   "variables": {
-    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
-    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "build_id": "{{env `BUILD_ID`}}",
     "code_branch": "{{env `CODE_BRANCH`}}",
     "puppet_branch": "{{env `PUPPET_BRANCH`}}",
@@ -118,7 +118,6 @@
         "sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
         "sudo mkdir -p /etc/collectd.d",
         "sudo cp -r /tmp/emon/* /",
-        "sudo echo -e \"EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}\\nEUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}\\nEUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}\\n\">/etc/eurostar_service_info",
         "sudo rm -rf /etc/puppet || true",
         "sudo rm -rf /tmp/* || true ",
         "sudo rm -rf /var/tmp/* || true",
