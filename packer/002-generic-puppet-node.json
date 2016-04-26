@@ -113,7 +113,7 @@
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi",
         "sudo tar -C /tmp -xzf /tmp/emon_bundle.tgz",
         "sudo cp -r /tmp/emon/* /",
-        "sudo yum install yum-utils cloud-init",
+        "sudo yum -y install yum-utils cloud-init",
         "sudo yum-config-manager --enable eurostar_prod",
         "sudo yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
         "sudo mkdir -p /etc/collectd.d",
@@ -127,7 +127,20 @@
     },
     {
       "type": "shell",
-      "script": 
+      "script": "scripts/create_eurostar_service_info.sh",
+      "environment_vars": [
+        "EUROSTAR_SERVICE_NAME": "{{user `eurostar_service_name`}}",
+        "EUROSTAR_SERVICE_ROLE": "{{user `eurostar_service_role`}}",
+        "EUROSTAR_RELEASE_VERSION": "{{user `eurostar_release_version`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_remote_metrics_info.sh",
+      "environment_vars": [
+        "METRICS_REMOTE_HOST": "{{user `metrics_remote_host`}}",
+        "METRICS_REMOTE_PORT": "{{user `metrics_remote_port`}}"
+      ]
     }
   ],
 
