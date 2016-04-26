@@ -95,6 +95,7 @@ resource "aws_autoscaling_group" "backend" {
 #  desired_capacity = "${var.asg_desired}"
   force_delete = true
   launch_configuration = "${aws_launch_configuration.backend.name}"
+  lifecycle { create_before_destroy = true }
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
   load_balancers = ["${aws_elb.backend.name}"]
   tag {
@@ -134,6 +135,7 @@ resource "aws_launch_configuration" "backend" {
   name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-backend"
   image_id = "${var.ami_appserver}"
   instance_type = "${var.instance_type}"
+  lifecycle { create_before_destroy = true }
   associate_public_ip_address = false
   security_groups = ["${aws_security_group.backend.id}"]
   user_data = "${file("./userdata.sh")}"

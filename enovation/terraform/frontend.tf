@@ -58,6 +58,7 @@ resource "aws_autoscaling_group" "frontend" {
   desired_capacity = "${var.asg_desired}"
   force_delete = true
   launch_configuration = "${aws_launch_configuration.frontend.name}"
+  lifecycle { create_before_destroy = true }
   vpc_zone_identifier = ["${aws_subnet.eu-west-1a.id}","${aws_subnet.eu-west-1b.id}"]
   load_balancers = ["${aws_elb.frontend.name}"]
   tag {
@@ -97,6 +98,7 @@ resource "aws_launch_configuration" "frontend" {
   name = "${var.tag_project}-${var.tag_environment}-LaunchConfig-frontend"
   image_id = "${var.ami_frontend}"
   instance_type = "${var.instance_type}"
+  lifecycle { create_before_destroy = true }
   associate_public_ip_address = false
   security_groups = ["${aws_security_group.frontend.id}"]
   user_data = "${file("./userdata.sh")}"
