@@ -60,11 +60,11 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 
 .PHONY: clone
 clone: ## Clone puppet repo
+	if [[ "$(ROLE)" == "frontend" ]]; then aws s3 cp s3://enovation-fe/builds/latest/enovation_fe_latest.tar.gz frontend/ ; fi;
 	rm -rf puppet; \
 	git clone --branch $(PUPPET_BRANCH) $(PUPPET_REPO) puppet; \
 	cd puppet; \
 	librarian-puppet install; \
-	if [[ "$(ROLE)" == "frontend" ]]; then aws s3 cp s3://enovation-fe/builds/latest/enovation_fe_latest.tar.gz frontend/ ; fi;
 
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
