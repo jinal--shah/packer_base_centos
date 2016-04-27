@@ -1,11 +1,10 @@
-AWS_ACCESS_KEY?=
-AWS_SECRET_KEY?=
+AWS_ACCESS_KEY_ID?=
+AWS_SECRET_ACCESS_KEY?=
 AWS_REGION?=eu-west-1
+
 ## ami-30ff5c47 = Official CentOS6.x AMI
 AWS_SOURCE_AMI?=ami-30ff5c47
-AWS_INSTANCE_TYPE?=
-AWS_DEFAULT_REGION?=eu-west-1
-AWS_DEFAULT_PROFILE?=eurostar
+AWS_INSTANCE_TYPE?=t2.small
 
 BUILD_ID?=$(shell date +%s)
 BUILDER?=amazon-ebs
@@ -17,8 +16,19 @@ SSH_KEYPAIR_NAME?=eurostar
 SSH_PRIVATE_KEY_FILE?=eurostar.pem
 SSH_USERNAME?=ec2-user
 
+# These EUROSTAR_* vars must meet only use alphanumberics or underscores
+# for their values.
+EUROSTAR_SERVICE_NAME?=enovation
+EUROSTAR_SERVICE_ROLE?=appsvr
+EUROSTAR_RELEASE_VERSION?=$(BUILD_ID)
+
+METRICS_REMOTE_HOST?=sa1.customeraccounts.eurostar.com
+METRICS_REMOTE_PORT?=2003
+
 ROLE?=app-server
 CODE_BRANCH?=enovation
+
+PUPPET_ROLE=$(ROLE)
 PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
 PUPPET_BRANCH?=enovation
 PUPPET_DIR?=puppet
@@ -31,27 +41,6 @@ PACKER_DEBUG?=#-debug
 PACKER_DIR?=./
 PACKER_LOG?=1
 PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
-
-# default vars file to pass to packer
-VAR_FILE=-var-file=$(PACKER_DIR)/default-variables.json
-
-# custom vars to pass to packer
-VARS=-var 'base_ami=$(BASE_AMI)' \
-     -var 'base_domain=$(BASE_DOMAIN)' \
-     -var 'build_id=$(BUILD_ID)' \
-     -var 'code_branch=$(CODE_BRANCH)' \
-     -var 'puppet_branch=$(PUPPET_BRANCH)' \
-     -var 'puppet_dir=$(PUPPET_DIR)' \
-     -var 'puppet_environment=$(PUPPET_ENVIRONMENT)' \
-     -var 'puppet_role=$(ROLE)' \
-     -var 'puppet_repo=$(PUPPET_REPO)' \
-     -var 'puppet_product=$(PUPPET_PRODUCT)' \
-     -var 'puppet_service=$(PUPPET_SERVICE)' \
-     -var 'base_image_source_ami=$(AWS_SOURCE_AMI)' \
-     -var 'ssh_username=$(SSH_USERNAME)' \
-     -var 'aws_access_key=$(AWS_ACCESS_KEY)' \
-     -var 'aws_secret_key=$(AWS_SECRET_KEY)' 
-
 
 .PHONY: help
 help: ## Run to show available make targets and descriptions
@@ -80,10 +69,7 @@ clone: ## Clone puppet repo
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
 	$(eval BASE_AMI := $(shell cat base_ami.id))
-	packer validate \
-	  $(VAR_FILE) \
-	  $(VARS) \
-	  "$(PACKER_TEMPLATE_PUPPET)"
+	packer validate "$(PACKER_TEMPLATE_PUPPET)"
 
 .PHONY: base
 base: ## Run packer build using defined variables to create patched base ami with puppet
@@ -93,10 +79,7 @@ base: ## Run packer build using defined variables to create patched base ami wit
 .PHONY: build 
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	$(eval BASE_AMI := $(shell cat base_ami.id))
-	packer build $(PACKER_DEBUG) \
-	  $(VAR_FILE) \
-	  $(VARS) \
-	  "$(PACKER_TEMPLATE_PUPPET)"
+	packer build $(PACKER_DEBUG) "$(PACKER_TEMPLATE_PUPPET)"
 
 SHELL=/bin/bash
 .PHONY: baseami

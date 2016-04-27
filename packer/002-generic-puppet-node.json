@@ -1,27 +1,26 @@
 {
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "base_ami": "{{env `BASE_AMI`}}",
+    "base_domain": "{{env `BASE_DOMAIN`}}",
     "build_id": "{{env `BUILD_ID`}}",
     "code_branch": "{{env `CODE_BRANCH`}}",
-    "puppet_branch": "{{env `PUPPET_BRANCH`}}",
-    "aws_region": "{{env `AWS_REGION`}}",
-    "base_ami": "{{env `BASE_AMI`}}",
-    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "eurostar_release_version": "{{env `EUROSTAR_RELEASE_VERSION`}}",
     "eurostar_service_name": "{{env `EUROSTAR_SERVICE_NAME`}}",
     "eurostar_service_role": "{{env `EUROSTAR_SERVICE_ROLE`}}",
-    "eurostar_release_version": "{{env `EUROSTAR_RELEASE_VERSION`}}",
     "metrics_remote_host": "{{env `METRICS_REMOTE_HOST`}}",
     "metrics_remote_port": "{{env `METRICS_REMOTE_PORT`}}",
-    "ssh_username": "{{env `SSH_USERNAME`}}",
-    "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
-    "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
-    "puppet_product": "{{env `PUPPET_PRODUCT`}}",
+    "puppet_dir": "{{env `PUPPET_DIR`}}",
     "puppet_environment": "{{env `PUPPET_ENVIRONMENT`}}",
+    "puppet_product": "{{env `PUPPET_PRODUCT`}}",
     "puppet_role": "{{env `PUPPET_ROLE`}}",
     "puppet_service": "{{env `PUPPET_SERVICE`}}",
-    "base_domain": "{{env `BASE_DOMAIN`}}",
-    "puppet_dir": "{{env `PUPPET_DIR`}}"
+    "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
+    "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
+    "ssh_username": "{{env `SSH_USERNAME`}}"
   },
   "builders": [
     {
@@ -107,27 +106,25 @@
     },
     {
       "type": "shell",
+      "inline": [
+        "if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
+        "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
+        "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/add_metrics_client_config.sh",
       "environment_vars": [
         "AWS_ACCESS_KEY_ID={{user `aws_access_key`}}",
         "AWS_SECRET_ACCESS_KEY={{user `aws_secret_key`}}"
       ],
-      "inline": [
-        "if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
-        "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
-        "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi",
-        "sudo tar -C /tmp -xzf /tmp/emon_bundle.tgz",
-        "sudo cp -r /tmp/emon/* /",
-        "sudo  yum -y install yum-utils cloud-init",
-        "sudo -E yum-config-manager --enable eurostar_prod",
-        "sudo -E yum -y install collectd collectd-dns collectd-netlink collectd-disk collectd-utils carbon-c-relay statsite collectd-rrdtool",
-        "sudo mkdir -p /etc/collectd.d",
-        "sudo cp -r /tmp/emon/* /",
-        "sudo rm -rf /etc/puppet || true",
-        "sudo rm -rf /tmp/* || true ",
-        "sudo rm -rf /var/tmp/* || true",
-        "sudo rm -rf /home/ec2-user/eif_puppet* /home/ec2-user/puppet-rsyslog-eif || true",
-        "sudo touch /packed-by-packer-{{timestamp}}"
-      ]
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/clean_up_tmp_artefacts.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     },
     {
       "type": "shell",
@@ -136,7 +133,8 @@
         "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
         "EUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}",
         "EUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}"
-      ]
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     },
     {
       "type": "shell",
@@ -144,7 +142,8 @@
       "environment_vars": [
         "METRICS_REMOTE_HOST={{user `metrics_remote_host`}}",
         "METRICS_REMOTE_PORT={{user `metrics_remote_port`}}"
-      ]
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     }
   ],
 
