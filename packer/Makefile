@@ -42,14 +42,15 @@ export PACKER_DIR?=./
 export PACKER_LOG?=1
 export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
 
-.PHONY: export_me
-export_me: ## show me my environment
-	@env | sort | uniq
-
 .PHONY: help
 help: ## Run to show available make targets and descriptions
 	@echo [INFO] Packer - Available make targets and descriptions
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: show_env
+show_env: ## show me my environment
+	@echo [INFO] EXPORTED ENVIRONMENT - AVAILABLE TO ALL TARGETS
+	@env | sort | uniq
 
 .PHONY: sshkeyfile
 sshkeyfile: ## Symlink local sshkey to directory to use in Packer
@@ -89,7 +90,7 @@ SHELL=/bin/bash
 .PHONY: baseami
 baseami:
 	if [[ "x$(BASE_AMI)" == "x" ]]; then \
-	  aws ec2 describe-images --region eu-west-1 \
+	  aws ec2 describe-images --region $(AWS_REGION) \
 	    --filters 'Name=name,Values=eurostar-microservices-base-centos-6.x-puppet-3.8.2' \
 	    --query 'Images[*].{ID:ImageId}' --output text | \
 	    tee base_ami.id; \

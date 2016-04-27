@@ -73,6 +73,11 @@
     },
     {
       "type": "file",
+      "source": "cob_bundle.tgz",
+      "destination": "/tmp/cob_bundle.tgz"
+    },
+    {
+      "type": "file",
       "source": "emon_bundle.tgz",
       "destination": "/tmp/emon_bundle.tgz"
     },
