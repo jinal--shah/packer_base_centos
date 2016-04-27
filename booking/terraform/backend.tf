@@ -51,16 +51,16 @@ resource "aws_route53_record" "elb-backend" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
-resource "aws_autoscaling_policy" "backend" {
-  name = "${var.tag_project}-${var.tag_environment}-BACK"
+resource "aws_autoscaling_policy" "scaleup-backend" {
+  name = "${var.tag_project}-${var.tag_environment}-scaleup-BACK"
   scaling_adjustment = 1
   adjustment_type = "ChangeInCapacity"
   cooldown = 300
   autoscaling_group_name = "${aws_autoscaling_group.backend.name}"
 }
 
-resource "aws_cloudwatch_metric_alarm" "backend-cpu" {
-  alarm_name = "${var.tag_project}-${var.tag_environment}-backend-cpu"
+resource "aws_cloudwatch_metric_alarm" "scaleup-backend-cpu" {
+  alarm_name = "${var.tag_project}-${var.tag_environment}-scaleup-backend-cpu"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "3"
   metric_name = "CPUUtilization"
@@ -72,7 +72,31 @@ resource "aws_cloudwatch_metric_alarm" "backend-cpu" {
     AutoScalingGroupName = "${aws_autoscaling_group.backend.name}"
   }
   alarm_description = "This metric monitor ec2 cpu utilization"
-  alarm_actions = ["${aws_autoscaling_policy.backend.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.scaleup-backend.arn}"]
+}
+
+resource "aws_autoscaling_policy" "scaledown-backend" {
+  name = "${var.tag_project}-${var.tag_environment}-scaledown-BACK"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.backend.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "scaledown-backend-cpu" {
+  alarm_name = "${var.tag_project}-${var.tag_environment}-scaledown-backend-cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "5"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.backend.name}"
+  }
+  alarm_description = "This metric monitor ec2 cpu utilization"
+  alarm_actions = ["${aws_autoscaling_policy.scaledown-backend.arn}"]
 }
 
 resource "aws_autoscaling_notification" "backend" {
