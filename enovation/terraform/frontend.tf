@@ -51,11 +51,72 @@ resource "aws_route53_record" "elb-frontend" {
 #################################################
 # Create ASG & Launchconfig
 #################################################
+resource "aws_autoscaling_policy" "scaleup-frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-scaleup-FRONT"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.frontend.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "scaleup-frontend-cpu" {
+  alarm_name = "${var.tag_project}-${var.tag_environment}-scaleup-frontend-cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "3"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.frontend.name}"
+  }
+  alarm_description = "This metric monitor ec2 cpu utilization"
+  alarm_actions = ["${aws_autoscaling_policy.scaleup-frontend.arn}"]
+}
+
+resource "aws_autoscaling_policy" "scaledown-frontend" {
+  name = "${var.tag_project}-${var.tag_environment}-scaledown-FRONT"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.frontend.name}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "scaledown-frontend-cpu" {
+  alarm_name = "${var.tag_project}-${var.tag_environment}-scaledown-frontend-cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "5"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "80"
+  dimensions {
+    AutoScalingGroupName = "${aws_autoscaling_group.frontend.name}"
+  }
+  alarm_description = "This metric monitor ec2 cpu utilization"
+  alarm_actions = ["${aws_autoscaling_policy.scaledown-frontend.arn}"]
+}
+
+resource "aws_autoscaling_notification" "frontend" {
+  group_names = [
+    "${aws_autoscaling_group.frontend.name}"
+  ]
+  notifications  = [
+    "autoscaling:EC2_INSTANCE_LAUNCH",
+    "autoscaling:EC2_INSTANCE_TERMINATE",
+    "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+    "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+  ]
+  topic_arn = "${aws_sns_topic.enovation.arn}"
+}
+
 resource "aws_autoscaling_group" "frontend" {
   name = "${var.tag_project}-${var.tag_environment}-frontend"
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
-  desired_capacity = "${var.asg_desired}"
+#  desired_capacity = "${var.asg_desired}"
   force_delete = true
   launch_configuration = "${aws_launch_configuration.frontend.name}"
   lifecycle { create_before_destroy = true }
