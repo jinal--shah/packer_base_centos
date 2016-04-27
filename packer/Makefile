@@ -1,46 +1,50 @@
-AWS_ACCESS_KEY_ID?=
-AWS_SECRET_ACCESS_KEY?=
-AWS_REGION?=eu-west-1
+export AWS_ACCESS_KEY_ID?=
+export AWS_SECRET_ACCESS_KEY?=
+export AWS_REGION?=eu-west-1
 
 ## ami-30ff5c47 = Official CentOS6.x AMI
-AWS_SOURCE_AMI?=ami-30ff5c47
-AWS_INSTANCE_TYPE?=t2.small
+export AWS_SOURCE_AMI?=ami-30ff5c47
+export AWS_INSTANCE_TYPE?=t2.small
 
-BUILD_ID?=$(shell date +%s)
-BUILDER?=amazon-ebs
-SHELL=/bin/bash
-BASE_AMI?=
-BASE_DOMAIN?=trainz.io
+export BUILD_ID?=$(shell date +%s)
+export BUILDER?=amazon-ebs
+export SHELL=/bin/bash
+export BASE_AMI?=
+export BASE_DOMAIN?=trainz.io
 
-SSH_KEYPAIR_NAME?=eurostar
-SSH_PRIVATE_KEY_FILE?=eurostar.pem
-SSH_USERNAME?=ec2-user
+export SSH_KEYPAIR_NAME?=eurostar
+export SSH_PRIVATE_KEY_FILE?=eurostar.pem
+export SSH_USERNAME?=ec2-user
 
 # These EUROSTAR_* vars must meet only use alphanumberics or underscores
 # for their values.
-EUROSTAR_SERVICE_NAME?=enovation
-EUROSTAR_SERVICE_ROLE?=appsvr
-EUROSTAR_RELEASE_VERSION?=$(BUILD_ID)
+export EUROSTAR_SERVICE_NAME?=enovation
+export EUROSTAR_SERVICE_ROLE?=appsvr
+export EUROSTAR_RELEASE_VERSION?=$(BUILD_ID)
 
-METRICS_REMOTE_HOST?=sa1.customeraccounts.eurostar.com
-METRICS_REMOTE_PORT?=2003
+export METRICS_REMOTE_HOST?=sa1.customeraccounts.eurostar.com
+export METRICS_REMOTE_PORT?=2003
 
-ROLE?=app-server
-CODE_BRANCH?=enovation
+export ROLE?=app-server
+export CODE_BRANCH?=enovation
 
-PUPPET_ROLE=$(ROLE)
-PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
-PUPPET_BRANCH?=enovation
-PUPPET_DIR?=puppet
-PUPPET_ENVIRONMENT?=integration
-PUPPET_SERVICE?=enovation
-PUPPET_PRODUCT?=enovation
+export PUPPET_ROLE=$(ROLE)
+export PUPPET_REPO?=https://github.com/ivangutev/eif_puppet.git
+export PUPPET_BRANCH?=enovation
+export PUPPET_DIR?=puppet
+export PUPPET_ENVIRONMENT?=integration
+export PUPPET_SERVICE?=enovation
+export PUPPET_PRODUCT?=enovation
 
-PACKER?=$(shell which packer)
-PACKER_DEBUG?=#-debug
-PACKER_DIR?=./
-PACKER_LOG?=1
-PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
+export PACKER?=$(shell which packer)
+export PACKER_DEBUG?=#-debug
+export PACKER_DIR?=./
+export PACKER_LOG?=1
+export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
+
+.PHONY: export_me
+export_me: ## show me my environment
+	@env | sort | uniq
 
 .PHONY: help
 help: ## Run to show available make targets and descriptions
@@ -85,7 +89,7 @@ SHELL=/bin/bash
 .PHONY: baseami
 baseami:
 	if [[ "x$(BASE_AMI)" == "x" ]]; then \
-	  aws ec2 describe-images \
+	  aws ec2 describe-images --region eu-west-1 \
 	    --filters 'Name=name,Values=eurostar-microservices-base-centos-6.x-puppet-3.8.2' \
 	    --query 'Images[*].{ID:ImageId}' --output text | \
 	    tee base_ami.id; \
