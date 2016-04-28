@@ -42,6 +42,9 @@ export PACKER_DIR?=./
 export PACKER_LOG?=1
 export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
 
+export ACTIVEMQ_USER?=admin
+export ACTIVEMQ_PASS?=
+
 .PHONY: help
 help: ## Run to show available make targets and descriptions
 	@echo [INFO] Packer - Available make targets and descriptions
