@@ -6,20 +6,26 @@
 # Installs:
 #
 # * cob (cob.py, yum plugin to treat S3 as a repo)
-# * RPMs to provide:
+# * RPMs to provide these services:
 #   * statsite (statsd replacement),
 #   * collectd,
 #   * carbon relay (which feeds to REMOTE_METRICS_HOST:REMOTE_METRICS_PORT)
 #
+# The services will be turned off by default.
+# On instance-up we expect the carbon-c-relay to be configured correctly
+# with runtime vars e.g. aws instance-id
+# The services should be started after this happens
+# (and then set to start on boot)
+#
 METRICS_RPMS="
+    carbon-c-relay
     collectd
+    collectd-disk
     collectd-dns
     collectd-netlink
-    collectd-disk
-    collectd-utils
-    carbon-c-relay
-    statsite
     collectd-rrdtool
+    collectd-utils
+    statsite
 "
 YUM_EMON_CONF=etc/yum.repos.d/emon.repo
 
@@ -36,3 +42,9 @@ YUM_EMON_CONF=etc/yum.repos.d/emon.repo
 && rm -rf /tmp/{cob,emon}                      \
           /tmp/{cob,emon}_bundle.tgz
 
+for service in carbon-c-relay collectd statsite; do
+    service $service stop >/dev/null 2>&1
+    chkconfig $service off
+done
+
+exit 0
