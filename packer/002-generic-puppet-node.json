@@ -83,14 +83,16 @@
     },
     {
       "type": "file",
-      "source": "uploads/local_bin/",
-      "destination": "/usr/local/bin"
+      "source": "uploads/local_bin",
+      "destination": "/tmp"
     },
     {
       "type": "shell",
       "inline": [
         "sudo rm -rf /etc/puppet",
         "sudo cp -a /tmp/puppet /etc/puppet"
+        "sudo chmod a+x /tmp/local_bin/*"
+        "sudo cp /tmp/local_bin/* /usr/local/bin"
       ]
     },
     {
