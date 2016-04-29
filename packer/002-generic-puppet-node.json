@@ -73,13 +73,18 @@
     },
     {
       "type": "file",
-      "source": "cob_bundle.tgz",
+      "source": "uploads/cob_bundle.tgz",
       "destination": "/tmp/cob_bundle.tgz"
     },
     {
       "type": "file",
-      "source": "emon_bundle.tgz",
+      "source": "uploads/emon_bundle.tgz",
       "destination": "/tmp/emon_bundle.tgz"
+    },
+    {
+      "type": "file",
+      "source": "uploads/local_bin/",
+      "destination": "/usr/local/bin"
     },
     {
       "type": "shell",
@@ -116,6 +121,11 @@
         "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
       ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_awscli.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     },
     {
       "type": "shell",
