@@ -16,7 +16,7 @@ export SSH_KEYPAIR_NAME?=eurostar
 export SSH_PRIVATE_KEY_FILE?=eurostar.pem
 export SSH_USERNAME?=ec2-user
 
-# These EUROSTAR_* vars must meet only use alphanumberics or underscores
+# These EUROSTAR_* vars must only use alphanumberics or underscores
 # for their values.
 export EUROSTAR_SERVICE_NAME?=enovation
 export EUROSTAR_SERVICE_ROLE?=appsvr
@@ -37,9 +37,11 @@ export PUPPET_SERVICE?=enovation
 export PUPPET_PRODUCT?=enovation
 
 export PACKER?=$(shell which packer)
+# ... THERE IS A BUG IN PACKER 0.10.0 - DEBUG WILL HANG
 export PACKER_DEBUG?=#-debug
 export PACKER_DIR?=./
-export PACKER_LOG?=1
+# ... PACKER_LOG=1 FOR VERBOSE OUTPUT - will reveal all env var variables so careful about security! 
+export PACKER_LOG?=0
 export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
 
 .PHONY: help
