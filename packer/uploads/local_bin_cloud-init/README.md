@@ -17,7 +17,11 @@ Each should:
 
 # Cloud init only runs at launch-time
 
-That's so important
+That's so important, I'll say it again.
+
+_Cloud init only runs at launch-time_.
+
+Don't expect a reboot to retrigger these babies.
 
 ## Immutable Infrastructure and Conscientious Cloud Init Usage
 
