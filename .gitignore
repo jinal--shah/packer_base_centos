@@ -3,6 +3,7 @@
 
 # ... ignore the assets from the packer build process
 packer/*.pem
+packer/local_test*
 packer/base_ami.id
 packer/puppet/
 */*.gz
