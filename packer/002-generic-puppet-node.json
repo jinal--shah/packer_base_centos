@@ -87,12 +87,15 @@
       "destination": "/tmp"
     },
     {
+      "type": "file",
+      "source": "uploads/local_bin_cloud-init",
+      "destination": "/tmp"
+    },
+    {
       "type": "shell",
       "inline": [
         "sudo rm -rf /etc/puppet",
-        "sudo cp -a /tmp/puppet /etc/puppet",
-        "sudo chmod a+x /tmp/local_bin/*",
-        "sudo cp /tmp/local_bin/* /usr/local/bin"
+        "sudo cp -a /tmp/puppet /etc/puppet"
       ]
     },
     {
@@ -128,6 +131,15 @@
       "type": "shell",
       "script": "scripts/install_awscli.sh",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo chmod a+x /tmp/local_bin/*",
+        "sudo cp /tmp/local_bin/* /usr/local/bin",
+        "sudo chmod a+x /tmp/local_bin_cloud-init/[0-9][0-9][0-9][0-9][0-9]-*",
+        "sudo cp /tmp/local_bin_cloud-init/ /usr/local/bin/cloud-init"
+      ]
     },
     {
       "type": "shell",
