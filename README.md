@@ -23,7 +23,8 @@ validate        Run packer validate using defined variables
 
 $ make clone build
 
-$ ROLE=gateway PACKER_DEBUG=-debug make clone build
+# ... WARNING: -debug will cause Packer 0.10.0 to hang
+$ ROLE=gateway PACKER_LOG=1 PACKER_DEBUG=-debug make clone build
 ```
 
 ## Terraform
@@ -34,24 +35,28 @@ Currently enovation has separate directories for the various servers:
 - booking/terraform/
 - payments/terraform/
 
-Due to time scales there is some repetition in the code. The aim would be to split out into a modules so that common code can be shared.
+        TODO: split out common terraform in to modules.
 
-[WARNING] The terraform state is being stored in S3. Before running terraform for the individual servers the remote state needs to be configured and retrieved.
+
+[WARNING] The terraform state is being stored in S3. Before running terraform for the
+individual servers the remote state needs to be configured and retrieved.
+
 ```
-$ export tag_environment=perf
-$ export tag_service=enovation
+$ export TAG_ENVIRONMENT=perf
+$ export TAG_SERVICE=enovation
 
 $ terraform remote config \
   -backend=s3 \
-  -backend-config="bucket=eurostar-terraform-state-${}" \
-  -backend-config="key=${tag_environment}/vpc.tfstate" \
+  -backend-config="bucket=eurostar-terraform-state-${TAG_SERVICE}" \
+  -backend-config="key=${TAG_ENVIRONMENT}/vpc.tfstate" \
   -backend-config="region=eu-west-1" \
   -backend-config="encrypt=true" \
   -backend-config="access_key=AKXXX" \
   -backend-config="secret_key=YYY"
 ```
 
-[OPTIONAL] Add variables and values to terraform.tfvars file that will be automtically read. Otherwise pass in values by exporting or inputing when terraform is run.
+[OPTIONAL] Add variables and values to terraform.tfvars file that will be automtically read.
+Otherwise pass in values by exporting or inputing when terraform is run.
 
 Plan, Build and Update:
 ```
@@ -68,11 +73,11 @@ $ terraform destroy
 ## Useful
 List Instance IDs and Instance Names filtered by environment tag:
 ```
-$ tag_environment=perf
+$ TAG_ENVIRONMENT=perf
 
 $ aws ec2 describe-instances \
-  --filter Name=instance-state-name,Values=running Name=tag:Environment,Values=${tag_environment} \
-  --query 'Reservations[*].Instances[*].{ID:InstanceId,NAME:Tags[?Key==`Name`].Value[]}' \
+  --filter Name=instance-state-name,Values=running Name=tag:Environment,Values=${TAG_ENVIRONMENT} \
+  --query 'Reservations[*].Instances[*].{ID:InstanceId,NAME:Tags[?Key==`Name`].Value[]}'          \
   --output text|sed 'N;s/\nNAME//'|sort -k2
 ```
 
