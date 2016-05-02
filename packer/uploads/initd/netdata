@@ -1,0 +1,141 @@
+#!/bin/bash
+# chkconfig: 2345 98 01
+# description: netdata ctl
+### BEGIN INIT INFO
+# Provides:
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: ctl netdata; will start at boot
+# Description:       ctl netdata
+### END INIT INFO
+
+NAME=netdata
+pid_file="/var/run/$NAME.pid"
+service_log="/var/log/$NAME/service.log"
+
+cmd="/usr/sbin/$NAME"
+user="root"
+
+log_info() {
+    _log_msg "$*" "INFO"
+}
+log_error() {
+    _log_msg "$*" "ERROR"
+}
+_log_msg() {
+    msg="$1"
+    level="${2:-UNKNOWN}"
+    echo "[$(date --rfc-3339 ns)] $0 [$level] $msg">>$service_log
+}
+is_running() {
+    pgrep -f "$cmd" >/dev/null 2>&1
+}
+service_start() {
+    log_info "... trying 'start'"
+    if is_running; then
+        log_info "... already started"
+    else
+        log_info "... starting $NAME"
+        $cmd
+        echo "$(pgrep -f $cmd)" > "$pid_file"
+        if ! is_running; then
+            log_error "Unable to start $NAME."
+            return 1
+        fi
+    fi
+}
+
+service_stop() {
+    log_info "... trying 'stop'"
+    if is_running; then
+        log_info "... stopping $NAME"
+
+        # ... on RHEL6 don't use killall as that is overloaded by /sbin/service
+        pkill -f $cmd
+        for i in {1..10}
+        do
+            if ! is_running; then
+                break
+            fi
+
+            echo -n "."
+            sleep 1
+        done
+        echo
+
+        if is_running; then
+            log_error "... not stopped; may still be shutting down or shutdown may have failed"
+            return 1
+        else
+            log_info "Stopped"
+            if [ -f "$pid_file" ]; then
+                rm "$pid_file"
+            fi
+        fi
+    else
+        log_info "Not running"
+    fi
+}
+
+service_restart() {
+    log_info "... trying 'restart' ('stop' then 'start')"
+    service_stop
+    if is_running; then
+        log_error "unable to stop, will not attempt to start"
+        return 1
+    fi
+    service_start
+}
+
+rc=0
+case "$1" in
+    start)      if ! service_start
+                then
+                    echo "ERROR: unable to start service $NAME."
+                    echo "       See $service_log for more info."
+                    rc=1
+                else
+                    echo "Service $NAME start successful"
+                fi
+                ;;
+
+    stop)       if ! service_stop
+                then
+                    echo "ERROR: unable to stop service $NAME."
+                    echo "       See $service_log for more info."
+                    rc=1
+                else
+                    echo "Service $NAME stop successful"
+                fi
+                ;;
+
+    restart)    if ! service_restart
+                then
+                    echo "ERROR: unable to restart service $NAME."
+                    echo "       See $service_log for more info."
+                    rc=1
+                else
+                    echo "Service $NAME restart successful"
+                fi
+                ;;
+
+    status)     if is_running; then
+                    echo "Running PID $(pgrep -f $cmd)"
+                else
+                    echo "Stopped. ('pgrep -f $cmd' found no results)."
+                fi
+                ;;
+
+    is_running) rc=$(is_running)
+                ;;
+
+    *)          echo "Usage: $0 {start|stop|restart|status|is_running}"
+                echo "       note: is_running: will return true or false (0 | 1)"
+                exit 1
+                ;;
+esac
+
+exit $rc
+

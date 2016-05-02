@@ -92,6 +92,11 @@
       "destination": "/tmp"
     },
     {
+      "type": "file",
+      "source": "uploads/initd",
+      "destination": "/tmp"
+    },
+    {
       "type": "shell",
       "inline": [
         "sudo rm -rf /etc/puppet",
@@ -129,12 +134,32 @@
     },
     {
       "type": "shell",
+      "script": "scripts/create_eurostar_service_info.sh",
+      "environment_vars": [
+        "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
+        "EUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}",
+        "EUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_remote_metrics_info.sh",
+      "environment_vars": [
+        "METRICS_REMOTE_HOST={{user `metrics_remote_host`}}",
+        "METRICS_REMOTE_PORT={{user `metrics_remote_port`}}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
       "script": "scripts/install_awscli.sh",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     },
     {
       "type": "shell",
       "inline": [
+        "# ... put scripts to run during cloud-init where they need to be",
         "sudo chmod a+x /tmp/local_bin/*",
         "sudo cp /tmp/local_bin/* /usr/local/bin",
         "sudo chmod a+x /tmp/local_bin_cloud-init/[0-9][0-9][0-9][0-9][0-9]-*",
@@ -153,26 +178,22 @@
     },
     {
       "type": "shell",
+      "script": "scripts/install_netdata.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "# ... make netdata a service on RHEL6-type os",
+        "sudo pkill netdata",
+        "sudo cp /tmp/initd/netdata /etc/init.d/netdata",
+        "sudo chmod a+x /etc/init.d/netdata",
+        "sudo chkconfig netdata on"
+      ]
+    },
+    {
+      "type": "shell",
       "script": "scripts/clean_up_tmp_artefacts.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/create_eurostar_service_info.sh",
-      "environment_vars": [
-        "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
-        "EUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}",
-        "EUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}"
-      ],
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/create_remote_metrics_info.sh",
-      "environment_vars": [
-        "METRICS_REMOTE_HOST={{user `metrics_remote_host`}}",
-        "METRICS_REMOTE_PORT={{user `metrics_remote_port`}}"
-      ],
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     }
   ],
