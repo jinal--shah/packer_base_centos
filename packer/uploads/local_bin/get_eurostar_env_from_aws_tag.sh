@@ -33,7 +33,7 @@ REQUIRED_VARS="
     AWS_INSTANCE_ID
     AWS_REGION
 "
-MAX_RETRIES=5   # ... no of times to try aws ec2 describe tags
+MAX_RETRIES=10   # ... no of times to try aws ec2 describe tags
 POLL_INTERVAL=5 # ... seconds to wait between retries (for --dry-run only)
 
 function check_var_defined() {
