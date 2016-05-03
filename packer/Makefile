@@ -32,7 +32,7 @@ export ROLE?=app-server
 export CODE_BRANCH?=enovation
 
 export PUPPET_ROLE=$(ROLE)
-export PUPPET_REPO?=https://github.com/ivangutev/eif_puppet.git
+export PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
 export PUPPET_BRANCH?=enovation
 export PUPPET_DIR?=puppet
 export PUPPET_ENVIRONMENT?=integration

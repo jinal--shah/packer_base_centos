@@ -33,6 +33,8 @@ REQUIRED_VARS="
     AWS_INSTANCE_ID
     AWS_REGION
 "
+MAX_RETRIES=10   # ... no of times to try aws ec2 describe tags
+POLL_INTERVAL=5 # ... seconds to wait between retries (for --dry-run only)
 
 function check_var_defined() {
     var_name="$1"
@@ -53,21 +55,56 @@ if [[ ! -z $FAILED_VALIDATION ]]; then
     exit 1
 fi
 
-if ! aws ec2 describe-tags --region $AWS_REGION --dry-run 2>&1 \
-     | grep 'would have succeeded' >/dev/null
-then
-    echo "$0 ERROR: can't run 'aws ec2 describe-tags'" >&2
-    echo "$0 ERROR: ... check your IAM's role has the ec2:DescribeTags Action in its policy?" 2>&1
+rc=0
+for attempt in $(eval echo {1..$MAX_RETRIES}); do
+    [[ $attempt -gt 1 ]] && echo "$0 INFO: ... retrying aws ec2 describe-tags dry-run"
+
+    if ! aws ec2 describe-tags --region $AWS_REGION --dry-run 2>&1 \
+        | grep 'would have succeeded' >/dev/null
+        rc=0
+        break
+    then
+        echo "$0 ERROR: can't run 'aws ec2 describe-tags'" >&2
+        echo "$0 ERROR: ... check your IAM's role has the ec2:DescribeTags Action in its policy?" >&2
+        rc=1
+        sleep $POLL_INTERVAL
+    fi
+
+done
+
+if [[ $rc -eq 1 ]]; then
+    echo "$0 ERROR: failed too many times. Bailing"
     exit 1
 fi
 
-aws_tags=$(
-    aws ec2 describe-tags                                    \
-        --filters "Name=resource-id,Values=$AWS_INSTANCE_ID" \
-        --region=$AWS_REGION                                 \
-        --output=text \
-    | awk {'print $2 " " $NF'}
-)
+rc=0
+for attempt in $(eval echo {1..$MAX_RETRIES}); do
+    [[ $attempt -gt 1 ]] && echo "$0 INFO: ... retrying fetching env tag "
+
+    aws_tags=$(
+        aws ec2 describe-tags                                    \
+            --filters "Name=resource-id,Values=$AWS_INSTANCE_ID" \
+            --region=$AWS_REGION                                 \
+            --output=text \
+        | awk {'print $2 " " $NF'} 2>/dev/null
+    )
+
+    if [[ -z $aws_tags ]]; then
+        rc=1
+        echo "$0 INFO: ... will retry in 1 second."
+        sleep 1
+    else
+        rc=0
+        break
+    fi
+
+done
+
+if [[ $rc -eq 1 ]]; then
+    echo "$0 ERROR: failed too many times. Bailing"
+    exit 1
+fi
+
 
 # ... precedence of possible synonymous Keys env -> Environment -> Env
 env_val=
