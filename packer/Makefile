@@ -25,6 +25,9 @@ export EUROSTAR_RELEASE_VERSION?=$(BUILD_ID)
 export METRICS_REMOTE_HOST?=sa1.customeraccounts.eurostar.com
 export METRICS_REMOTE_PORT?=2003
 
+export ALERTLOGIC_HOST?=alertlogic-tmc.aws.eurostar.com
+export ALERTLOGIC_KEY?=1d38d8832e9d36240843db0f51b5326eba7233c1cc2f18c7f6
+
 export ROLE?=app-server
 export CODE_BRANCH?=enovation
 
