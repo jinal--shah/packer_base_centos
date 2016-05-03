@@ -1,4 +1,0 @@
-*.pem
-base_ami.id
-puppet/
-*.gz

@@ -1,62 +1,61 @@
-AWS_ACCESS_KEY?=
-AWS_SECRET_KEY?=
-AWS_REGION?=eu-west-1
+export AWS_ACCESS_KEY_ID?=
+export AWS_SECRET_ACCESS_KEY?=
+export AWS_REGION?=eu-west-1
+
 ## ami-30ff5c47 = Official CentOS6.x AMI
-AWS_SOURCE_AMI?=ami-30ff5c47
-AWS_INSTANCE_TYPE?=
-AWS_DEFAULT_REGION?=eu-west-1
-AWS_DEFAULT_PROFILE?=eurostar
+export AWS_SOURCE_AMI?=ami-30ff5c47
+export AWS_INSTANCE_TYPE?=t2.small
 
-BUILD_ID?=$(shell date +%s)
-BUILDER?=amazon-ebs
-SHELL=/bin/bash
-BASE_AMI?=
-BASE_DOMAIN?=trainz.io
+export BUILD_ID?=$(shell date +%s)
+export BUILDER?=amazon-ebs
+export SHELL=/bin/bash
+export BASE_AMI?=
+export BASE_DOMAIN?=trainz.io
 
-SSH_KEYPAIR_NAME?=eurostar
-SSH_PRIVATE_KEY_FILE?=eurostar.pem
-SSH_USERNAME?=ec2-user
+export SSH_KEYPAIR_NAME?=eurostar
+export SSH_PRIVATE_KEY_FILE?=eurostar.pem
+export SSH_USERNAME?=ec2-user
 
-ROLE?=app-server
-CODE_BRANCH?=enovation
-PUPPET_REPO?=git@github.com:ivangutev/eif_puppet.git
-PUPPET_BRANCH?=enovation
-PUPPET_DIR?=puppet
-PUPPET_ENVIRONMENT?=integration
-PUPPET_SERVICE?=enovation
-PUPPET_PRODUCT?=enovation
+# These EUROSTAR_* vars must only use alphanumberics or underscores
+# for their values.
+export EUROSTAR_SERVICE_NAME?=enovation
+export EUROSTAR_SERVICE_ROLE?=appsvr
+export EUROSTAR_RELEASE_VERSION?=$(BUILD_ID)
 
-PACKER?=$(shell which packer)
-PACKER_DEBUG?=#-debug
-PACKER_DIR?=./
-PACKER_LOG?=1
-PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
+export METRICS_REMOTE_HOST?=sa1.customeraccounts.eurostar.com
+export METRICS_REMOTE_PORT?=2003
 
-# default vars file to pass to packer
-VAR_FILE=-var-file=$(PACKER_DIR)/default-variables.json
+export ROLE?=app-server
+export CODE_BRANCH?=enovation
 
-# custom vars to pass to packer
-VARS=-var 'base_ami=$(BASE_AMI)' \
-     -var 'base_domain=$(BASE_DOMAIN)' \
-     -var 'build_id=$(BUILD_ID)' \
-     -var 'code_branch=$(CODE_BRANCH)' \
-     -var 'puppet_branch=$(PUPPET_BRANCH)' \
-     -var 'puppet_dir=$(PUPPET_DIR)' \
-     -var 'puppet_environment=$(PUPPET_ENVIRONMENT)' \
-     -var 'puppet_role=$(ROLE)' \
-     -var 'puppet_repo=$(PUPPET_REPO)' \
-     -var 'puppet_product=$(PUPPET_PRODUCT)' \
-     -var 'puppet_service=$(PUPPET_SERVICE)' \
-     -var 'base_image_source_ami=$(AWS_SOURCE_AMI)' \
-     -var 'ssh_username=$(SSH_USERNAME)' \
-     -var 'aws_access_key=$(AWS_ACCESS_KEY)' \
-     -var 'aws_secret_key=$(AWS_SECRET_KEY)' 
+export PUPPET_ROLE=$(ROLE)
+export PUPPET_REPO?=https://github.com/ivangutev/eif_puppet.git
+export PUPPET_BRANCH?=enovation
+export PUPPET_DIR?=puppet
+export PUPPET_ENVIRONMENT?=integration
+export PUPPET_SERVICE?=enovation
+export PUPPET_PRODUCT?=enovation
 
+export PACKER?=$(shell which packer)
+# ... THERE IS A BUG IN PACKER 0.10.0 - DEBUG WILL HANG
+export PACKER_DEBUG?=#-debug
+export PACKER_DIR?=./
+# ... PACKER_LOG=1 FOR VERBOSE OUTPUT - will reveal all env var variables so careful about security! 
+export PACKER_LOG?=0
+export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
+
+export ACTIVEMQ_USER?=admin
+export ACTIVEMQ_PASS?=
 
 .PHONY: help
 help: ## Run to show available make targets and descriptions
 	@echo [INFO] Packer - Available make targets and descriptions
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: show_env
+show_env: ## show me my environment
+	@echo [INFO] EXPORTED ENVIRONMENT - AVAILABLE TO ALL TARGETS
+	@env | sort | uniq
 
 .PHONY: sshkeyfile
 sshkeyfile: ## Symlink local sshkey to directory to use in Packer
@@ -80,10 +79,7 @@ clone: ## Clone puppet repo
 .PHONY: validate
 validate: sshkeyfile baseami ## Run packer validate using defined variables
 	$(eval BASE_AMI := $(shell cat base_ami.id))
-	packer validate \
-	  $(VAR_FILE) \
-	  $(VARS) \
-	  "$(PACKER_TEMPLATE_PUPPET)"
+	packer validate "$(PACKER_TEMPLATE_PUPPET)"
 
 .PHONY: base
 base: ## Run packer build using defined variables to create patched base ami with puppet
@@ -93,16 +89,13 @@ base: ## Run packer build using defined variables to create patched base ami wit
 .PHONY: build 
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	$(eval BASE_AMI := $(shell cat base_ami.id))
-	packer build $(PACKER_DEBUG) \
-	  $(VAR_FILE) \
-	  $(VARS) \
-	  "$(PACKER_TEMPLATE_PUPPET)"
+	packer build $(PACKER_DEBUG) "$(PACKER_TEMPLATE_PUPPET)"
 
 SHELL=/bin/bash
 .PHONY: baseami
 baseami:
 	if [[ "x$(BASE_AMI)" == "x" ]]; then \
-	  aws ec2 describe-images \
+	  aws ec2 describe-images --region $(AWS_REGION) \
 	    --filters 'Name=name,Values=eurostar-microservices-base-centos-6.x-puppet-3.8.2' \
 	    --query 'Images[*].{ID:ImageId}' --output text | \
 	    tee base_ami.id; \

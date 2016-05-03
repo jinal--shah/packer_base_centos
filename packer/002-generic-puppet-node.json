@@ -1,23 +1,28 @@
 {
   "variables": {
+    "activemq_pass": "{{env `ACTIVEMQ_PASS`}}",
+    "activemq_user": "{{env `ACTIVEMQ_USER`}}",
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "base_ami": "{{env `BASE_AMI`}}",
+    "base_domain": "{{env `BASE_DOMAIN`}}",
     "build_id": "{{env `BUILD_ID`}}",
     "code_branch": "{{env `CODE_BRANCH`}}",
-    "puppet_branch": "{{env `PUPPET_BRANCH`}}",
-    "aws_region": "{{env `AWS_REGION`}}",
-    "base_ami": "{{env `BASE_AMI`}}",
-    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
-    "ssh_username": "{{env `SSH_USERNAME`}}",
-    "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
-    "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
-    "puppet_product": "{{env `PUPPET_PRODUCT`}}",
+    "eurostar_release_version": "{{env `EUROSTAR_RELEASE_VERSION`}}",
+    "eurostar_service_name": "{{env `EUROSTAR_SERVICE_NAME`}}",
+    "eurostar_service_role": "{{env `EUROSTAR_SERVICE_ROLE`}}",
+    "metrics_remote_host": "{{env `METRICS_REMOTE_HOST`}}",
+    "metrics_remote_port": "{{env `METRICS_REMOTE_PORT`}}",
+    "puppet_dir": "{{env `PUPPET_DIR`}}",
     "puppet_environment": "{{env `PUPPET_ENVIRONMENT`}}",
+    "puppet_product": "{{env `PUPPET_PRODUCT`}}",
     "puppet_role": "{{env `PUPPET_ROLE`}}",
     "puppet_service": "{{env `PUPPET_SERVICE`}}",
-    "base_domain": "{{env `BASE_DOMAIN`}}",
-    "puppet_dir": "{{env `PUPPET_DIR`}}"
-
+    "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
+    "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
+    "ssh_username": "{{env `SSH_USERNAME`}}"
   },
   "builders": [
     {
@@ -47,9 +52,9 @@
         "BaseDomain": "{{user `base_domain`}}",
         "CodeBranch": "{{user `code_branch`}}",
         "BuildId": "{{user `build_id`}}",
-	"BaseAmi": "{{user `base_ami`}}"
+        "BaseAmi": "{{user `base_ami`}}"
       }
-    } 
+    }
   ],
 
   "provisioners": [
@@ -70,8 +75,28 @@
     },
     {
       "type": "file",
-      "source": "emon_bundle.tgz",
+      "source": "uploads/cob_bundle.tgz",
+      "destination": "/tmp/cob_bundle.tgz"
+    },
+    {
+      "type": "file",
+      "source": "uploads/emon_bundle.tgz",
       "destination": "/tmp/emon_bundle.tgz"
+    },
+    {
+      "type": "file",
+      "source": "uploads/local_bin",
+      "destination": "/tmp"
+    },
+    {
+      "type": "file",
+      "source": "uploads/local_bin_cloud-init",
+      "destination": "/tmp"
+    },
+    {
+      "type": "file",
+      "source": "uploads/initd",
+      "destination": "/tmp"
     },
     {
       "type": "shell",
@@ -84,6 +109,8 @@
       "type": "puppet-masterless",
       "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} FACTER_operatingsystemmajrelease='6' sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
       "facter": {
+        "activemq_pass": "{{user `activemq_pass`}}",
+        "activemq_user": "{{user `activemq_user`}}",
         "branch_tag": "{{user `code_branch`}}",
         "build_id": "{{user `build_id`}}",
         "is_production": "false",
@@ -93,8 +120,8 @@
         "base_domain": "{{user `base_domain`}}",
         "service": "{{user `puppet_service`}}",
         "env": "{{user `puppet_environment`}}",
-      	"access_key": "{{user `aws_access_key`}}",
-      	"secret_key": "{{user `aws_secret_key`}}"        
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}"
       },
       "manifest_file": "{{pwd}}/default.pp",
       "staging_directory": "/tmp/puppet",
@@ -104,18 +131,76 @@
     {
       "type": "shell",
       "inline": [
-        "if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
+        "# if [ {{user `puppet_environment`}} == 'prod' ]; then sudo /tmp/alertlogic.sh; fi",
         "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
-        "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi",
-        "sudo rm -rf /etc/puppet || true",
-        "sudo rm -rf /tmp/* || true ",
-        "sudo rm -rf /var/tmp/* || true",
-        "sudo rm -rf /home/ec2-user/eif_puppet* /home/ec2-user/puppet-rsyslog-eif || true",
-        "sudo touch /packed-by-packer-{{timestamp}}"
+        "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
       ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_eurostar_service_info.sh",
+      "environment_vars": [
+        "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
+        "EUROSTAR_SERVICE_ROLE={{user `eurostar_service_role`}}",
+        "EUROSTAR_RELEASE_VERSION={{user `eurostar_release_version`}}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_remote_metrics_info.sh",
+      "environment_vars": [
+        "METRICS_REMOTE_HOST={{user `metrics_remote_host`}}",
+        "METRICS_REMOTE_PORT={{user `metrics_remote_port`}}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_awscli.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "# ... put scripts to run during cloud-init where they need to be",
+        "sudo chmod a+x /tmp/local_bin/*",
+        "sudo cp /tmp/local_bin/* /usr/local/bin",
+        "sudo chmod a+x /tmp/local_bin_cloud-init/[0-9][0-9][0-9][0-9][0-9]-*",
+        "sudo mkdir -p /usr/local/bin/cloud-init",
+        "sudo cp /tmp/local_bin_cloud-init/* /usr/local/bin/cloud-init"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/add_metrics_client_config.sh",
+      "environment_vars": [
+        "AWS_ACCESS_KEY_ID={{user `aws_access_key`}}",
+        "AWS_SECRET_ACCESS_KEY={{user `aws_secret_key`}}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_netdata.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "# ... make netdata a service on RHEL6-type os",
+        "sudo pkill netdata",
+        "sudo cp /tmp/initd/netdata /etc/init.d/netdata",
+        "sudo chmod a+x /etc/init.d/netdata",
+        "sudo chkconfig netdata on"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/clean_up_tmp_artefacts.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     }
   ],
 
-  "post-processors": [
-      ]
+  "post-processors": [ ]
 }
