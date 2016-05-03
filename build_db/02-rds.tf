@@ -3,9 +3,9 @@
 #################################################
 # DB Parameter Group
 resource "aws_db_parameter_group" "default" {
-  name  = "${var.tag_service}-db-${var.db_instance_count}-pg"
+  name  = "${var.tag_product}-${var.tag_environment}-pg"
   family = "mysql5.6"
-  description = "${var.tag_project}-${var.tag_environment} DB parameter group"
+  description = "${var.tag_product}-${var.tag_environment} DB parameter group"
 
   parameter {
     name = "query_cache_size"
@@ -13,16 +13,13 @@ resource "aws_db_parameter_group" "default" {
   }
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_environment}-db-pg"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-pg"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 }
 
@@ -37,8 +34,8 @@ resource "aws_db_instance" "default" {
   db_subnet_group_name        = "${aws_db_subnet_group.default.id}"
   engine                      = "mysql"
   engine_version              = "5.6.22"
-  final_snapshot_identifier   = "${var.tag_project}-${var.tag_service}-${var.tag_environment}-db${var.db_instance_count}-final"
-  identifier                  = "${var.tag_project}-${var.tag_service}-${var.tag_environment}-db${var.db_instance_count}-id"
+  final_snapshot_identifier   = "${var.tag_product}-${var.tag_environment}-db${var.db_instance_count}-final"
+  identifier                  = "${var.tag_product}-${var.tag_environment}-db${var.db_instance_count}-id"
   instance_class              = "${var.db_instance_class}"
   multi_az                    = "${var.db_multi_az}"
   name                        = "${var.database_name}"
@@ -52,16 +49,13 @@ resource "aws_db_instance" "default" {
 
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_environment}-db"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "Database"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 
   depends_on = ["aws_db_parameter_group.default"]
@@ -70,7 +64,7 @@ resource "aws_db_instance" "default" {
 
 resource "aws_route53_record" "default" {
    zone_id = "${var.aws_route53_zone_id}"
-   name = "db${var.db_instance_count}.${var.tag_environment}.${var.tag_project}.trainz.io"
+   name = "db${var.tag_product}-${var.tag_environment}.trainz.io"
    type = "CNAME"
    ttl = "60"
    records = ["${aws_db_instance.default.endpoint}"]

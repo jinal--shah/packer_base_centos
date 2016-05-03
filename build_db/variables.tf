@@ -17,14 +17,12 @@ variable "availability_zones" {
   description = "List of availability zones, use AWS CLI to find your "
 }
 
-variable "tag_department" {}
 variable "tag_environment" {}
-variable "tag_project" {}
+variable "tag_product" {}
 variable "tag_role" {}
 variable "tag_creator" {}
 variable "tag_service" {}
 variable "tag_servicecriticality" {}
-variable "tag_supportcontact" {}
 
 # RDS
 variable "aws_route53_zone_id" {

@@ -14,16 +14,13 @@ resource "aws_vpc" "default" {
   enable_dns_support = true
   enable_dns_hostnames = true
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-vpc"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_db_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-vpc"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 }
 #################################################
@@ -32,16 +29,13 @@ resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-igw"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-igw"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 }
 
@@ -53,16 +47,13 @@ resource "aws_subnet" "db-private-subnet-1a" {
   availability_zone = "eu-west-1a"
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-private-subnet-1a"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-private-subnet-1a"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 }
 
@@ -72,37 +63,31 @@ resource "aws_subnet" "db-private-subnet-1b" {
   availability_zone = "eu-west-1b"
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-private-subnet-1b"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-private-subnet-1b"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 }
 
 #################################################
 # Security Group
 resource "aws_security_group" "default" {
-  name = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sg"
-  description = "${var.tag_project}-${var.tag_environment}-db-security group"
+  name = "${var.tag_product}-${var.tag_environment}-db-sg"
+  description = "${var.tag_product}-${var.tag_environment}-db-security group"
   vpc_id = "${aws_vpc.default.id}"
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sg"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-sg"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 
   depends_on = ["aws_vpc.default"]
@@ -111,24 +96,21 @@ resource "aws_security_group" "default" {
 #################################################
 # Subnet Group
 resource "aws_db_subnet_group" "default" {
-  name = "${var.tag_service}-${var.tag_environment}-db-sng"
-  description = "${var.tag_project}-${var.tag_environment} DB subnet group"
+  name = "${var.tag_product}-${var.tag_environment}-db-sng"
+  description = "${var.tag_product}-${var.tag_environment} DB subnet group"
   subnet_ids = [
     "${aws_subnet.db-private-subnet-1a.id}",
     "${aws_subnet.db-private-subnet-1b.id}"
   ]
 
   tags {
-    Name        = "${var.tag_service}-${var.tag_project}-${var.tag_environment}-db-sng"
-    Build       = "Automatic"
-    Creator     = "${var.tag_creator}"
-    Department  = "${var.tag_department}"
-    Environment = "${var.tag_environment}"
-    Project     = "${var.tag_project}"
-    Role        = "${var.tag_role}"
-    Service     = "${var.tag_service}"
-    ServiceCriticality  = "${var.tag_servicecriticality}"
-    SupportContact      = "${var.tag_supportcontact}"
+    Name        = "${var.tag_product}-${var.tag_environment}-db-sng"
+    creator     = "${var.tag_creator}"
+    environment = "${var.tag_environment}"
+    product     = "${var.tag_product}"
+    role        = "${var.tag_db_role}"
+    service     = "${var.tag_service}"
+    serviceCriticality  = "${var.tag_servicecriticality}"
   }
 
   depends_on = [
