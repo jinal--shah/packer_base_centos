@@ -1,5 +1,7 @@
 {
   "variables": {
+    "activemq_pass": "{{env `ACTIVEMQ_PASS`}}",
+    "activemq_user": "{{env `ACTIVEMQ_USER`}}",
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
     "aws_region": "{{env `AWS_REGION`}}",
@@ -107,6 +109,8 @@
       "type": "puppet-masterless",
       "execute_command": "cd {{.WorkingDir}} && {{.FacterVars}} FACTER_operatingsystemmajrelease='6' sudo -E puppet apply --verbose --debug --detailed-exitcodes --parser=future -e \"hiera_include('classes')\" --environment={{user `puppet_environment`}} --hiera_config=/etc/puppet/hiera.yaml --modulepath='$confdir/environments/$environment/roles:$confdir/environments/$environment/modules:$confdir/environments/common/roles:$confdir/environments/common/modules:$confdir/modules'",
       "facter": {
+        "activemq_pass": "{{user `activemq_pass`}}",
+        "activemq_user": "{{user `activemq_user`}}",
         "branch_tag": "{{user `code_branch`}}",
         "build_id": "{{user `build_id`}}",
         "is_production": "false",
