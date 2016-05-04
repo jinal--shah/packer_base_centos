@@ -25,7 +25,7 @@ then
     yum clean headers dbcache
     echo "$0 INFO: ... installing epel repo for yum"
     wget -O /tmp/epel.rpm $EPEL_RPM_URI                 \
-    && yum -y localinstall /tmp/epel.rpm                   \
+    && yum -y localinstall /tmp/epel.rpm                \
     && [[ -r $EPEL_REPO_FILE ]]                         \
     && sed -i 's/^enabled=1/enabled=0/' $EPEL_REPO_FILE \
     && rm -f /tmp/epel.rpm
