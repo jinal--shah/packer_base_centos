@@ -134,6 +134,11 @@
     },
     {
       "type": "shell",
+      "script": "scripts/install_basic_pkgs.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
       "script": "scripts/create_eurostar_service_info.sh",
       "environment_vars": [
         "EUROSTAR_SERVICE_NAME={{user `eurostar_service_name`}}",
