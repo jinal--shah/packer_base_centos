@@ -15,6 +15,8 @@
     "eurostar_service_role": "{{env `EUROSTAR_SERVICE_ROLE`}}",
     "metrics_remote_host": "{{env `METRICS_REMOTE_HOST`}}",
     "metrics_remote_port": "{{env `METRICS_REMOTE_PORT`}}",
+    "alertlogic_host": "{{env `ALERTLOGIC_HOST`}}",
+    "alertlogic_key": "{{env `ALERTLOGIC_KEY`}}",
     "puppet_dir": "{{env `PUPPET_DIR`}}",
     "puppet_environment": "{{env `PUPPET_ENVIRONMENT`}}",
     "puppet_product": "{{env `PUPPET_PRODUCT`}}",
