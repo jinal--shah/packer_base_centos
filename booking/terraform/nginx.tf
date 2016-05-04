@@ -20,6 +20,8 @@ variable "asg_desired_nginx" {
   default = "2"
 }
 
+variable "aws_iam_instance_profile_nginx" {}
+
 #################################################
 # Create ASG & Launchconfig
 #################################################
@@ -82,7 +84,9 @@ resource "aws_autoscaling_group" "nginx" {
 
 resource "aws_launch_configuration" "nginx" {
   name_prefix = "${var.tag_project}-${var.tag_environment}-LC-nginx-"
-  iam_instance_profile = "${aws_iam_instance_profile.gateway.name}"
+# Issue: iam_instance_profile not fully ready when instances launched. Run separately for now.
+#  iam_instance_profile = "${aws_iam_instance_profile.gateway.name}"
+  iam_instance_profile = "${var.aws_iam_instance_profile_nginx}"
   image_id = "${var.ami_nginx}"
   instance_type = "${var.instance_type_nginx}"
   lifecycle { create_before_destroy = true }
