@@ -39,9 +39,10 @@ export PUPPET_PRODUCT?=enovation
 export PACKER?=$(shell which packer)
 # ... THERE IS A BUG IN PACKER 0.10.0 - DEBUG WILL HANG
 export PACKER_DEBUG?=#-debug
+
+# ... PACKER_LOG=1 FOR VERBOSE OUTPUT - will reveal all env var variables so careful about security!
+export PACKER_LOG?=
 export PACKER_DIR?=./
-# ... PACKER_LOG=1 FOR VERBOSE OUTPUT - will reveal all env var variables so careful about security! 
-export PACKER_LOG?=0
 export PACKER_TEMPLATE_PUPPET?=$(PACKER_DIR)/002-generic-puppet-node.json
 
 export ACTIVEMQ_USER?=admin
