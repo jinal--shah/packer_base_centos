@@ -39,7 +39,7 @@ else
     echo "$0: INFO: epel already installed."
 fi
 
-yum -y install python python-pip $ENABLE_EPEL_ARG \
+yum -y install python python-pip --enablerepo epel \
 && pip install awscli
 
 if ! aws --version >/dev/null 2>&1
