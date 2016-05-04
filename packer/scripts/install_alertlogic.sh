@@ -17,16 +17,8 @@ function check_var_defined() {
     fi
 }
 
-function add_to_info_str() {
-    var_name="$1"
-    var_val="${!var_name}"
-    key_val="$var_name=$var_val"
-    OUTPUT_STR="$OUTPUT_STR\n$key_val"
-}
-
 for this_var in $REQUIRED_VARS; do
-    check_var_defined $this_var \
-    && add_to_info_str $this_var
+    check_var_defined $this_var
 done
 
 if [[ ! -z $FAILED_VALIDATION ]]; then
@@ -49,7 +41,7 @@ if [ -f /var/alertlogic/etc/host_crt.pem ] && [ -f /var/alertlogic/etc/host_key.
 fi
 
 # SELinux rules
-semanage port --add --type syslogd_port_t --proto tcp 1514 && \
-semanage port --add --type syslogd_port_t --proto tcp 2514
+semanage port --add --type syslogd_port_t --proto tcp 1514    \
+&& semanage port --add --type syslogd_port_t --proto tcp 2514
 
 chkconfig al-agent off
