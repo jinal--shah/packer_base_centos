@@ -126,6 +126,14 @@ resource "aws_security_group" "nginx" {
     cidr_blocks = ["10.0.0.0/8"]
   }
 
+  # netdata HTTP access
+  ingress {
+    from_port   = 19999
+    to_port     = 19999
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
   # ICMP
   ingress {
     from_port = -1
