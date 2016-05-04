@@ -12,6 +12,7 @@ resource "aws_iam_policy" "s3-policy" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"      ],
       "Effect": "Allow",
@@ -35,7 +36,7 @@ resource "aws_iam_policy_attachment" "s3-policy-attach" {
   policy_arn = "${aws_iam_policy.s3-policy.arn}"
 }
 
-# Gateway - Bastion
+# Gateway
 /*resource "aws_iam_role_policy" "gateway" {
   name = "${var.tag_service}-${var.tag_environment}-gateway-iam-role-policy"
   role = "${aws_iam_role.gateway.id}"
@@ -45,6 +46,7 @@ resource "aws_iam_policy_attachment" "s3-policy-attach" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"
       ],
@@ -91,6 +93,7 @@ resource "aws_iam_instance_profile" "gateway" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"
       ],
@@ -137,6 +140,7 @@ resource "aws_iam_instance_profile" "frontend" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"
       ],
@@ -183,6 +187,7 @@ resource "aws_iam_instance_profile" "app-server" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"
       ],
@@ -229,6 +234,7 @@ resource "aws_iam_instance_profile" "message-broker" {
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeTags*",
         "s3:Get*",
         "s3:List*"
       ],
