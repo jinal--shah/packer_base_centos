@@ -157,6 +157,7 @@ resource "aws_autoscaling_group" "backend" {
 
 resource "aws_launch_configuration" "backend" {
   name_prefix = "${var.tag_project}-${var.tag_environment}-LC-backend-"
+  iam_instance_profile = "${aws_iam_instance_profile.app-server.name}"
   image_id = "${var.ami_appserver}"
   instance_type = "${var.instance_type}"
   lifecycle { create_before_destroy = true }
