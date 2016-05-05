@@ -96,6 +96,11 @@
       "destination": "/tmp"
     },
     {
+      "type": "file",
+      "source": "uploads/etc_eurostar",
+      "destination": "/tmp"
+    },
+    {
       "type": "shell",
       "inline": [
         "sudo rm -rf /etc/puppet",
@@ -128,7 +133,6 @@
     {
       "type": "shell",
       "inline": [
-        "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo sed -i 's/%{environment}/{{user `puppet_environment`}}/g' /tmp/frontend/frontend.init; sudo bash /tmp/frontend/frontend.sh; fi",
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
       ]
     },
@@ -136,6 +140,14 @@
       "type": "shell",
       "script": "scripts/install_basic_pkgs.sh",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "# ... make sure our eurostar info dir exists and cp static info files over.",
+        "sudo mkdir /etc/eurostar || true",
+        "sudo cp -a /tmp/etc_eurostar/* /etc/eurostar"
+      ]
     },
     {
       "type": "shell",

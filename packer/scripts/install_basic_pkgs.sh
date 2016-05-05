@@ -11,19 +11,21 @@
 # PKGS: ... list of pkgs which can come from epel
 PKGS="
     curl
-    wget
     vim-enhanced
 "
-echo    "$0 INFO: ... installing basic packages:"
-echo -e "$0 INFO: ..." $PKGS
-
-echo    "$0 INFO: ... checking for epel. Installing if needed."
 EPEL_RPM_URI=https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 EPEL_REPO_FILE=/etc/yum.repos.d/epel.repo
 
+echo    "$0 INFO: ... installing basic packages:"
+echo -e "$0 INFO: ..." $PKGS
+
+echo "$0 INFO: installing wget"
+
+yum clean headers dbcache
+yum -y install wget
+echo    "$0 INFO: ... checking for epel. Installing if needed."
 if ! yum repolist all | awk {'print $1'} | grep '^epel$' 2>/dev/null
 then
-    yum clean headers dbcache
     echo "$0 INFO: ... installing epel repo for yum"
     wget -O /tmp/epel.rpm $EPEL_RPM_URI                 \
     && yum -y localinstall /tmp/epel.rpm                \
