@@ -10,7 +10,8 @@
 # Description:       enovation_fe service
 ### END INIT INFO
 
-ENV_VARS="export EUROSTAR_ENV=%{environment}; export NODE_ENV=production;"
+#ENV_VARS="export EUROSTAR_ENV=%{environment}; export NODE_ENV=production;"
+ENV_VARS=""
 dir="/srv/enovation_fe"
 cmd="$ENV_VARS forever start -l /var/log/enovation_fe/forever.log -o /var/log/enovation_fe/app.log -e /var/log/enovation_fe/app-err.log -a ${dir}/server/index.js"
 user="root"
