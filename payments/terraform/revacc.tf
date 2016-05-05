@@ -165,7 +165,7 @@ resource "aws_launch_configuration" "revacc" {
   lifecycle { create_before_destroy = true }
   associate_public_ip_address = false
   security_groups = ["${aws_security_group.revacc.id}"]
-#  user_data = "${file("./userdata.sh")}"
+  user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
 }
 
