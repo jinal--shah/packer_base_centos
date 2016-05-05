@@ -20,6 +20,8 @@ variable "asg_desired_nginx" {
   default = "2"
 }
 
+variable "aws_iam_instance_profile_nginx" {}
+
 #################################################
 # Create ASG & Launchconfig
 #################################################
@@ -83,6 +85,9 @@ resource "aws_autoscaling_group" "nginx" {
 
 resource "aws_launch_configuration" "nginx" {
   name_prefix = "${var.tag_project}-${var.tag_environment}-LC-nginx-"
+# Issue: iam_instance_profile not fully ready when instances launched. Run separately for now.
+#  iam_instance_profile = "${aws_iam_instance_profile.gateway.name}"
+  iam_instance_profile = "${var.aws_iam_instance_profile_nginx}"
   image_id = "${var.ami_nginx}"
   instance_type = "${var.instance_type_nginx}"
   lifecycle { create_before_destroy = true }
@@ -91,7 +96,7 @@ resource "aws_launch_configuration" "nginx" {
 #  user_data = "${file("./userdata.sh")}"
   key_name = "${var.aws_key_name}"
   ## Nginx requires resolvable dns entries to start service
-#  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend"]
+  depends_on = ["aws_route53_record.elb-backend","aws_route53_record.elb-frontend","aws_elb.backend","aws_elb.frontend"]
 }
 
 #################################################

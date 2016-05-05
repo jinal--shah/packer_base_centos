@@ -20,7 +20,7 @@ variable "asg_desired_revacc" {
   default = "1"
 }
 
-
+variable "aws_iam_instance_profile_app-server" {}
 
 #################################################
 # ELB
@@ -157,6 +157,9 @@ resource "aws_autoscaling_group" "revacc" {
 
 resource "aws_launch_configuration" "revacc" {
   name_prefix = "${var.tag_project}-${var.tag_environment}-LC-revacc-"
+# Issue: iam_instance_profile not fully ready when instances launched. Run separately for now.
+#  iam_instance_profile = "${aws_iam_instance_profile.app-server.name}"
+  iam_instance_profile = "${var.aws_iam_instance_profile_revacc}"
   image_id = "${var.ami_revacc}"
   instance_type = "${var.instance_type}"
   lifecycle { create_before_destroy = true }

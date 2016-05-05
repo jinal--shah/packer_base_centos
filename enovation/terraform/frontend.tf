@@ -1,3 +1,6 @@
+
+variable "aws_iam_instance_profile_frontend" {}
+
 #################################################
 # ELB - Frontend
 resource "aws_elb" "frontend" {
@@ -157,6 +160,9 @@ resource "aws_autoscaling_group" "frontend" {
 
 resource "aws_launch_configuration" "frontend" {
   name_prefix = "${var.tag_project}-${var.tag_environment}-LC-frontend-"
+# Issue: iam_instance_profile not fully ready when instances launched. Run separately for now.
+#  iam_instance_profile = "${aws_iam_instance_profile.app-server.name}"
+  iam_instance_profile = "${var.aws_iam_instance_profile_app-server}"
   image_id = "${var.ami_frontend}"
   instance_type = "${var.instance_type}"
   lifecycle { create_before_destroy = true }
