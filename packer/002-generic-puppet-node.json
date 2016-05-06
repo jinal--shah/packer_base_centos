@@ -133,6 +133,7 @@
     {
       "type": "shell",
       "inline": [
+        "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo bash /tmp/frontend/frontend.sh; fi",
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
       ]
     },
