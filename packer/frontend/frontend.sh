@@ -3,7 +3,7 @@ set -e
 NODE_ENV=production
 
 mkdir /etc/enovation-fe
-cp /tmp/frontend/enovation.* /etc/enovation-fe/
+cp /tmp/frontend/env_vars.* /etc/enovation-fe/
 
 mv /tmp/frontend/frontend.init /etc/init.d/enovation_fe
 chown root:root /etc/init.d/enovation_fe
