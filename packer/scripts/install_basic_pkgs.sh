@@ -10,8 +10,11 @@
 #
 # PKGS: ... list of pkgs which can come from epel
 PKGS="
+    bind-utils
     curl
+    lsof
     vim-enhanced
+    tcpdump
 "
 EPEL_RPM_URI=https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 EPEL_REPO_FILE=/etc/yum.repos.d/epel.repo
@@ -43,3 +46,6 @@ else
 fi
 
 yum -y install $PKGS --enablerepo epel
+
+# ... make vim comments readable ...
+echo "hi Comment ctermfg=6" >> /etc/vimrc
