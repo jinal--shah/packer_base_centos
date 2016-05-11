@@ -13,8 +13,10 @@ PKGS="
     bind-utils
     curl
     lsof
-    vim-enhanced
     tcpdump
+    telnet
+    tree
+    vim-enhanced
 "
 EPEL_RPM_URI=https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 EPEL_REPO_FILE=/etc/yum.repos.d/epel.repo
