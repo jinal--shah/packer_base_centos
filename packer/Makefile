@@ -1,7 +1,7 @@
 export AWS_ACCESS_KEY_ID?=
 export AWS_SECRET_ACCESS_KEY?=
 export AWS_REGION?=eu-west-1
-
+export FRONTEND_RELEASE?=
 ## ami-30ff5c47 = Official CentOS6.x AMI
 export AWS_SOURCE_AMI?=ami-30ff5c47
 export AWS_INSTANCE_TYPE?=t2.small
@@ -74,7 +74,7 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 
 .PHONY: clone
 clone: ## Clone puppet repo
-	if [[ "$(ROLE)" == "frontend" ]]; then aws s3 cp s3://enovation-fe/builds/latest/enovation_fe_latest.tar.gz frontend/ ; fi;
+	if [[ "$(ROLE)" == "frontend" ]]; then aws s3 cp s3://enovation-fe/builds/enovation_fe_$(FRONTEND_RELEASE).tar.gz frontend/ ; fi;
 	rm -rf puppet; \
 	git clone --branch $(PUPPET_BRANCH) $(PUPPET_REPO) puppet; \
 	cd puppet; \
@@ -90,7 +90,7 @@ base: ## Run packer build using defined variables to create patched base ami wit
 	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) validate
 	PACKER_TEMPLATE_PUPPET=001-base-image.json $(MAKE) build
 
-.PHONY: build 
+.PHONY: build
 build: baseami validate ## Run packer build using defined variables (e.g. ROLE=gateway PACKER_DEBUG=-debug make build)
 	$(eval BASE_AMI := $(shell cat base_ami.id))
 	packer build $(PACKER_DEBUG) "$(PACKER_TEMPLATE_PUPPET)"
@@ -106,4 +106,3 @@ baseami:
 	else \
 	  echo "$(BASE_AMI)" > base_ami.id; \
 	fi
-
