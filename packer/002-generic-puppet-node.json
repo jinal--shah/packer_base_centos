@@ -138,8 +138,8 @@
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
       ],
       "environment_vars": [
-        "FRONTEND_RELEASE={{user `frontend_release`}}",
-      ],
+        "FRONTEND_RELEASE={{user `frontend_release`}}"
+      ]
     },
     {
       "type": "shell",
