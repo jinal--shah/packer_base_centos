@@ -13,6 +13,7 @@
     "eurostar_release_version": "{{env `EUROSTAR_RELEASE_VERSION`}}",
     "eurostar_service_name": "{{env `EUROSTAR_SERVICE_NAME`}}",
     "eurostar_service_role": "{{env `EUROSTAR_SERVICE_ROLE`}}",
+    "frontend_release": "{{env `FRONTEND_RELEASE`}}",
     "metrics_remote_host": "{{env `METRICS_REMOTE_HOST`}}",
     "metrics_remote_port": "{{env `METRICS_REMOTE_PORT`}}",
     "alertlogic_host": "{{env `ALERTLOGIC_HOST`}}",
@@ -135,7 +136,10 @@
       "inline": [
         "if [ {{user `puppet_role`}} == 'frontend' ]; then sudo bash /tmp/frontend/frontend.sh; fi",
         "if [ -f /etc/init.d/nginx ]; then sudo chkconfig nginx on; fi"
-      ]
+      ],
+      "environment_vars": [
+        "FRONTEND_RELEASE={{user `frontend_release`}}",
+      ],
     },
     {
       "type": "shell",
