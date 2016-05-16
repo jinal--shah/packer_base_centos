@@ -21,6 +21,7 @@ TMP_PKGS="
     automake
     gcc
     git
+    libuuid-devel
     make
     pkgconfig
     zlib-devel
