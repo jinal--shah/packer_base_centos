@@ -1,10 +1,8 @@
+# ... if user installed pip locally
 */get-pip.py
+# ... if user storing vars to export to run make locally
 .env_vars
 
 # ... ignore the assets from the packer build process
-packer/*.pem
-packer/local_test*
-packer/base_ami.id
-packer/puppet/
+*.pem
 */*.gz
-packer/.librarian
