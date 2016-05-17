@@ -1,0 +1,1 @@
+# packer_base_centos
