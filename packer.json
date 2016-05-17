@@ -1,17 +1,19 @@
 {
   "variables": {
-    "ami_name": "eurostar-microservices-base-centos-6.x-puppet-3.8.2",
-    "ami_description": "Eurostar Base Centos-6.x Golden Image With Puppet-3.8.2 {{timestamp}}",
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "ami_description": "{{env `AMI_DESCRIPTION`}}",
     "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "ami_name": "{{env `AMI_NAME`}}",
+    "ami_os": "centos",
+    "ami_os_release": "{{env `AMI_OS_RELEASE`}}",
+    "ami_source": "{{env `AMI_SOURCE`}}",
     "aws_region": "{{env `AWS_REGION`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "base_image_source_ami": "{{env `AWS_SOURCE_AMI`}}",
-    "build_id": "{{env `BUILD_ID`}}",
+    "branch_tag": "{{env `BRANCH_TAG`}}",
+    "build_time": "{{env `BUILD_TIME`}}",
     "ssh_keypair_name": "{{env `SSH_KEYPAIR_NAME`}}",
     "ssh_private_key_file": "{{env `SSH_PRIVATE_KEY_FILE`}}",
-    "ssh_username": "{{env `SSH_USERNAME`}}",
-    "puppet_version": "3.8.2"
+    "ssh_username": "{{env `SSH_USERNAME`}}"
   },
   "builders": [
     {
@@ -19,10 +21,11 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "{{user `aws_region`}}",
-      "source_ami": "{{user `base_image_source_ami`}}",
+      "ami_source": "{{user `ami_source`}}",
       "instance_type": "{{user `aws_instance_type`}}",
       "ami_name": "{{user `ami_name`}}",
       "ami_description": "{{user `ami_description`}}",
+      "ami_os": "{{user `ami_os`}}",
       "ssh_username": "{{user `ssh_username`}}",
       "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
       "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
@@ -33,39 +36,52 @@
         "volume_size": "8"
       }],
       "tags": {
-        "OS_Version": "Centos",
-        "Release": "6.x",
-        "Puppet": "{{user `puppet_version`}}",
-        "BuildId": "{{user `build_id`}}",
-        "Project": "microservices",
-        "Service": "base",
-        "Role": "base",
-        "Environment": "any",
-        "CodeBranch": "dev"
+        "os": "{{user `ami_os`}}",
+        "os_release": "{{user `ami_os_release`}}",
+        "build_time": "{{user `build_time`}}",
+        "branch_tag": "{{user `branch_tag`}}",
+        "ami_source": "{{user `ami_source` }}"
       }
     }
   ],
 
   "provisioners": [
     {
+      "type": "file",
+      "source": "uploads",
+      "destination": "/tmp"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/make_permissive.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/os_upgrade.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_ec2-user.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
       "type": "shell",
       "inline": [
-        "chkconfig iptables off && setenforce 0 && sed -i s/^SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config",
-        "yum upgrade --assumeyes",
-        "rpm -ivh https://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm",
-        "yum install -y 'puppet-{{user `puppet_version`}}' rubygem-deep_merge python-setuptools",
-        "yum clean all",
-        "groupadd --gid 500 ec2-user",
-        "useradd --gid 500 -G wheel ec2-user",
-        "mkdir /home/ec2-user/.ssh",
-        "cp /root/.ssh/authorized_keys /home/ec2-user/.ssh/authorized_keys",
-        "chown -R ec2-user:ec2-user /home/ec2-user/",
-        "sed -i 's/\\(^# \\)\\(%wheel.*NOPASSWD.*\\)/\\2/g' /etc/sudoers",
-        "rm -rvf /root/.ssh/authorized_keys"
+        "# ... upload overlay files",
+        "sudo cp /tmp/uploads/* /",
+        "sudo chmod a+x /usr/local/bin/cloud-init/[0-9][0-9][0-9][0-9][0-9]-*"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "# ... make cloud-init scripts executables",
+        "sudo chmod a+x /usr/local/bin/cloud-init/[0-9][0-9][0-9][0-9][0-9]-*"
       ]
     }
   ],
 
-  "post-processors": [
-  ]
+  "post-processors": []
 }
