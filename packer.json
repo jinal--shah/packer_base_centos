@@ -60,21 +60,6 @@
     },
     {
       "type": "shell",
-      "script": "scripts/make_permissive.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/os_upgrade.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/create_ec2-user.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
       "inline": [
         "# ... upload overlay files",
         "sudo cp -r /tmp/uploads/* /"
@@ -86,6 +71,26 @@
         "# ... make cloud-init scripts executables",
         "sudo chmod a+x /usr/local/bin/cloud-init/[0-9][0-9][0-9][0-9][0-9]-*"
       ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/os_upgrade.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/make_permissive.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/create_ec2-user.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_awscli.sh",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     }
   ],
 
