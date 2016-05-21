@@ -8,8 +8,8 @@ ID=500
 echo "$0 INFO: creating $USER with superuser abilities (part of wheel group)"
 groupadd --gid $ID $USER
 
-useradd --uuid $ID \
-        --gid $ID  \
+useradd --uid $ID         \
+        --gid $ID         \
         -d /home/$USER -m \
         --shell /bin/bash \
         -G wheel,$USER    \

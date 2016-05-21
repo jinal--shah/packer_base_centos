@@ -7,19 +7,20 @@
 #
 echo "$0 INFO: turning off iptables and selinux policies"
 
-chkconfig iptables off
+chkconfig iptables off \
+&& setenforce 0
 
-if ! setenforce 0 2>&1 | grep 'is disabled' >/dev/null 2>&1
+if ! getenforce 2>&1 | grep -i 'permissive' >/dev/null 2>&1
 then
-   echo "$0 ERROR: couldn't disable selinux ..." 
+   echo "$0 ERROR: couldn't disable selinux ..."
    exit 1
 fi
 
 SELINUX_CFG=/etc/selinux/config
-if [[ ! -w $SELINUX_CFG ]]; then
+if [[ -f $SELINUX_CFG ]]; then
     sed -i 's/^SELINUX=enforcing/SELINUX=disabled/g' $SELINUX_CFG
 else
-    echo "$0 ERROR: file not writable: $SELINUX_CFG"
+    echo "$0 ERROR: file does not exist: $SELINUX_CFG"
     exit 1
 fi
 
