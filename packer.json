@@ -45,6 +45,7 @@
         "build_git_repo": "{{user `build_git_repo`}}",
         "build_git_sha": "{{user `build_git_sha`}}",
         "build_time": "{{user `build_time`}}",
+        "channel": "dev",
         "os": "{{user `ami_os`}}",
         "os_release": "{{user `ami_os_release`}}"
       }
