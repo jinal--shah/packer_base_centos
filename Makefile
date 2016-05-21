@@ -67,7 +67,7 @@ export BUILD_TIME=$(shell date +%Y%m%d%H%M%S)
 export AMI_OS_INFO=$(AMI_OS)-$(AMI_OS_RELEASE)
 export AMI_DESCRIPTION=$(AMI_OS_INFO): $(AMI_DESC_TXT)
 export AMI_NAME=base_$(AMI_OS_INFO)-$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)-$(BUILD_TIME)
-export AMI_SOURCE_ID?=$(shell                                           \
+export AMI_SOURCE_ID?=$(shell                                            \
 	aws --cli-read-timeout 10 ec2 describe-images --region $(AWS_REGION) \
 	--filter 'Name=manifest-location,Values=$(AMI_SOURCE_FILTER)'        \
 	--query 'Images[*].{ID:ImageId}'                                     \
@@ -83,8 +83,8 @@ __failures = $(if $(value $1),, $(error You must pass env_var $1 to Makefile))
 help: ## Run to show available make targets and descriptions
 	@echo $(failures)
 	@echo [INFO] Packer - Available make targets and descriptions
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)									\
-		| sort																			\
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)            \
+		| sort                                                     \
 		| awk 'BEGIN {FS = ":.*?## "};{printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}';
 
 .PHONY: show_env
@@ -100,16 +100,16 @@ check_vars: ## checks mandatory vars are in make's env or fails
 
 .PHONY: sshkeyfile
 sshkeyfile: ## Symlink local sshkey to directory to use in Packer
-	@if [ -f ./$(SSH_PRIVATE_KEY_FILE) ];												\
-		then echo "[INFO] Found sshkey: ./$(SSH_PRIVATE_KEY_FILE)";						\
-	elif [ -f ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ];											\
-	then																				\
-		echo "[INFO] Found sshkey creating symlink: ~/.ssh/$(SSH_PRIVATE_KEY_FILE)";	\
-		ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE);				\
-	else																				\
-		echo -e "\033[0;31m[ERROR] Create a copy of sshkey in current directory "		\
-		echo -e "(or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n";					\
-		exit 1;																			\
+	@if [ -f ./$(SSH_PRIVATE_KEY_FILE) ];                                            \
+		then echo "[INFO] Found sshkey: ./$(SSH_PRIVATE_KEY_FILE)";                  \
+	elif [ -f ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ];                                      \
+	then                                                                             \
+		echo "[INFO] Found sshkey creating symlink: ~/.ssh/$(SSH_PRIVATE_KEY_FILE)"; \
+		ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE);             \
+	else                                                                             \
+		echo -e "\033[0;31m[ERROR] Create a copy of sshkey in current directory "    \
+		echo -e "(or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n";                \
+		exit 1;                                                                      \
 	fi;
 
 .PHONY: validate
