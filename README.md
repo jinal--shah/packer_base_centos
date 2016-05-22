@@ -72,6 +72,6 @@ See generated value $AMI_NAME in Makefile for more details.
 
         aws ec2 create-tags --region=$AWS_REGION \
         --resources $AMI_ID                      \
-        --tags 'Key=channel,Value=stable
+        --tags 'Key=channel,Value=stable'
 
 
