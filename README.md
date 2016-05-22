@@ -37,7 +37,7 @@ It is also responsible for the creation of the standard ec2-user.
   It is this stable, tested ami that later ami layers will look for to use
   as a base.
 
-  *See examples of changing tags and discovering appropriate AMIs below.*
+  **See examples of changing tags and discovering appropriate AMIs below.**
 
 
 ## OUTPUT
