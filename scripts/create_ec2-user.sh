@@ -38,6 +38,3 @@ fi
 echo "$0 INFO: ... enabling wheel group to use passwordless sudo ..."
 sed -i 's/^\(# *\)\(%wheel.*NOPASSWD.*\)/\2/g' /etc/sudoers
 
-echo "$0 INFO: ... removing root's authorized_keys file"
-rm -rvf /root/.ssh/authorized_keys
-

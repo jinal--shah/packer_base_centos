@@ -19,7 +19,8 @@ MANDATORY_VARS=           \
 #
 GIT_SHA_LEN=8
 PACKER_JSON=packer.json
-export AMI_DESC_TXT=ec2-user, permissive settings, updates
+AMI_PREFIX=eurostar_aws
+export AMI_DESC_TXT=ec2-user;permissive settings;awscli;cob;basic ops pkgs;yum updates
 export AMI_OS=centos
 export AMI_OS_RELEASE=6.5
 export AMI_SOURCE_FILTER=aws-marketplace/CentOS 6 x86_64*EBS*HVM*
@@ -66,7 +67,7 @@ export BUILD_TIME=$(shell date +%Y%m%d%H%M%S)
 
 export AMI_OS_INFO=$(AMI_OS)-$(AMI_OS_RELEASE)
 export AMI_DESCRIPTION=$(AMI_OS_INFO): $(AMI_DESC_TXT)
-export AMI_NAME=base_$(AMI_OS_INFO)-$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)-$(BUILD_TIME)
+export AMI_NAME=$(AMI_PREFIX)-$(BUILD_TIME)-$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)
 export AMI_SOURCE_ID?=$(shell                                            \
 	aws --cli-read-timeout 10 ec2 describe-images --region $(AWS_REGION) \
 	--filter 'Name=manifest-location,Values=$(AMI_SOURCE_FILTER)'        \
@@ -75,7 +76,7 @@ export AMI_SOURCE_ID?=$(shell                                            \
 )
 export PACKER?=$(shell which packer)
 
-# ... validate mandatory vars are defined
+# ... validate MANDATORY_VARS are defined
 check_defined = $(foreach 1,$1,$(__failures))
 __failures = $(if $(value $1),, $(error You must pass env_var $1 to Makefile))
 
@@ -107,7 +108,7 @@ sshkeyfile: ## Symlink local sshkey to directory to use in Packer
 		echo "[INFO] Found sshkey creating symlink: ~/.ssh/$(SSH_PRIVATE_KEY_FILE)"; \
 		ln -sf ~/.ssh/$(SSH_PRIVATE_KEY_FILE) ./$(SSH_PRIVATE_KEY_FILE);             \
 	else                                                                             \
-		echo -e "\033[0;31m[ERROR] Create a copy of sshkey in current directory "    \
+		echo -e "\033[0;31m[ERROR] Create a copy of sshkey in current directory"     \
 		echo -e "(or symlink): e.g ./$(SSH_PRIVATE_KEY_FILE)\e[0m\n";                \
 		exit 1;                                                                      \
 	fi;
