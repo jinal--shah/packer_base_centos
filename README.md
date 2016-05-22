@@ -30,7 +30,7 @@ It is also responsible for the creation of the standard ec2-user.
 
 * After it is smoke tested, merge to master, build and test comprehensively.
 
-* *On successful testing, the AMI's channel tag should be set to  _stable_.*
+* **On successful testing, the AMI's channel tag should be set to  _stable_.**
 
   _Obviously, this should be automated ..._
 
