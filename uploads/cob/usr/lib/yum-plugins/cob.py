@@ -3,6 +3,7 @@
 # Cob: yet another yum S3 plugin
 #
 # Copyright 2014-2015, Henry Huang <henry.s.huang@gmail.com>.
+# MODIFIED TO SUPPORT AWS_* env vars - jin <jnshah@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
