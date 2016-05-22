@@ -63,11 +63,14 @@ export BUILD_GIT_ORG=$(shell \
 	echo $(BUILD_GIT_REPO)   \
 	| sed -e 's!.*[:/]\([^/]\+\)/.*!\1!' \
 )
+
+AMI_NAME_GIT_INFO=$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)
+
 export BUILD_TIME=$(shell date +%Y%m%d%H%M%S)
 
 export AMI_OS_INFO=$(AMI_OS)-$(AMI_OS_RELEASE)
 export AMI_DESCRIPTION=$(AMI_OS_INFO): $(AMI_DESC_TXT)
-export AMI_NAME=$(AMI_PREFIX)-$(BUILD_TIME)-$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)
+export AMI_NAME=$(AMI_PREFIX)-$(AMI_OS_INFO)-$(BUILD_TIME)-$(AMI_NAME_GIT_INFO)
 export AMI_SOURCE_ID?=$(shell                                            \
 	aws --cli-read-timeout 10 ec2 describe-images --region $(AWS_REGION) \
 	--filter 'Name=manifest-location,Values=$(AMI_SOURCE_FILTER)'        \
