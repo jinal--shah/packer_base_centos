@@ -18,8 +18,8 @@ fi
 
 # ... install
 # ... make cob invokable - needs yum-config-manager (in yum-utils)
-sudo yum -y install yum-utils      \
-&& sudo cp -r /tmp/uploads/cob/* /
+yum -y install yum-utils
+cp -r $UPLOADS/* /
 
 # ... verify
 if ! sudo yum info yum | grep -i 'loaded plugins:.*\<cob\>' >/dev/null
@@ -29,5 +29,6 @@ then
 fi
 
 # ... cleanup
-sudo rm -rf $UPLOADS
+rm -rf $UPLOADS
 
+exit 0

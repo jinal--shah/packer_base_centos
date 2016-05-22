@@ -16,12 +16,19 @@ if [[ ! -d $UPLOADS ]]; then
     echo "$0 ERROR: ... couldn't find uploads dir $UPLOADS" >&2
     exit 1
 fi
-sudo cp -r $UPLOADS/* /
-sudo yum -y install cloud-init
 
+# ... install
+yum -y install cloud-init
+cp -r $UPLOADS/* /
+
+# ... verify
 if ! yum info cloud-init | grep -i 'repo.*: installed' >/dev/null
 then
     echo "$0 ERROR: ... can't find installed cloud-init in yum info" >&2
     exit 1
 fi
 
+# ... cleanup
+rm -rf $UPLOADS
+
+exit 0
