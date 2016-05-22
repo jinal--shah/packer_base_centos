@@ -1,28 +1,36 @@
 #!/bin/bash
 # vim: et sr sw=4 ts=4 smartindent:
 #
-# install_awscli.sh
+# install_ops_basic_pkgs.sh
 #
 # Installs:
 #
-# * python
-# * pip (yum package)
-# * awscli
+# * packages wanted on every node to help out ops work
+# * epel repo conf (installed but disabled)
 #
-# needs to use epel repo
-
-# Check for epel repo. Install if needed. Enable it.
-# Remember original state to disable epel
-
-echo "$0 INFO: ... installing aws cli"
-
-echo "$0 INFO: ... checking for epel. Installing if needed."
+# PKGS: ... list of pkgs which can come from epel
+PKGS="
+    bind-utils
+    curl
+    lsof
+    tcpdump
+    telnet
+    tree
+    vim-enhanced
+"
 EPEL_RPM_URI=https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 EPEL_REPO_FILE=/etc/yum.repos.d/epel.repo
 
+echo    "$0 INFO: ... installing basic packages:"
+echo -e "$0 INFO: ..." $PKGS
+
+echo "$0 INFO: installing wget"
+
+yum clean headers dbcache
+yum -y install wget
+echo    "$0 INFO: ... checking for epel. Installing if needed."
 if ! yum repolist all | awk {'print $1'} | grep '^epel$' 2>/dev/null
 then
-    yum clean headers dbcache
     echo "$0 INFO: ... installing epel repo for yum"
     wget -O /tmp/epel.rpm $EPEL_RPM_URI                 \
     && yum -y localinstall /tmp/epel.rpm                \
@@ -39,13 +47,8 @@ else
     echo "$0: INFO: epel already installed."
 fi
 
-yum -y install python python-pip --enablerepo epel \
-&& pip --no-cache-dir install --upgrade awscli
+yum -y install $PKGS --enablerepo epel
 
-if ! aws --version >/dev/null 2>&1
-then
-    echo "$0 ERROR: aws client not installed in to path correctly." >&2
-    echo "          ... See ERROR messages above." >&2
-    exit 1
-fi
-exit 0
+# ... make vim comments readable ...
+echo "hi Comment ctermfg=6" >> /etc/vimrc
+
