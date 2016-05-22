@@ -1,4 +1,4 @@
-# packer_base_centos_aws
+# packer\_base\_centos\_aws
 
 Assets used to build a base AMI for Eurostar projects with daringly permissive
 adjustments to selinux and iptables, and a progressive attitude to rpm updates.
@@ -50,7 +50,7 @@ The resulting AMI is named:
 
         eurostar_aws-centos-6.5-20160522105037-0ad9aa7a-master
 
-See generated value $AMI_NAME in Makefile for more details.
+See generated value $AMI\_NAME in Makefile for more details.
 
 ## DISCOVERY
 
