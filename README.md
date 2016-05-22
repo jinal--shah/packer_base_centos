@@ -5,7 +5,7 @@ adjustments to selinux and iptables, and a progressive attitude to rpm updates.
 
 It is also responsible for the creation of the standard ec2-user.
 
-*ADD STUFF TO THIS LAYER THAT SHOULD REALLY EXIST ON ANY EUROSTAR PROJECT*
+*ADD TO THIS LAYER THINGS THAT ARE AXIOMATIC FOR ANY EUROSTAR RHEL-BASED LINUX*
 
 ## BUILD
 
