@@ -59,38 +59,13 @@
       "destination": "/tmp"
     },
     {
-      "type": "shell",
-      "script": "scripts/os_upgrade.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
+      "type": "file",
+      "source": "scripts",
+      "destination": "/tmp"
     },
     {
       "type": "shell",
-      "script": "scripts/make_permissive.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/install_ops_basic_pkgs.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/install_awscli.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/install_cloud-init.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/install_cob.sh",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
-    },
-    {
-      "type": "shell",
-      "script": "scripts/create_ec2-user.sh",
+      "script": "scripts/run_scripts.sh",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E {{ .Path }}"
     },
     {
@@ -98,7 +73,7 @@
       "inline": [
         "# THINGS TO DO LAST OF ALL ...",
         "# ... delete uploads dir on remote",
-        "sudo rm -rf /tmp/uploads",
+        "sudo rm -rf /tmp/{uploads,scripts}",
         "# ... make all delivered cloud-init scripts executables",
         "sudo chmod a+x /usr/local/bin/cloud-init/[0-9][0-9][0-9][0-9][0-9]-*",
         "# ... delete root's authorized_keys for ssh",
