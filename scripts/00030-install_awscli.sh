@@ -22,21 +22,10 @@ EPEL_REPO_FILE=/etc/yum.repos.d/epel.repo
 
 if ! yum repolist all | awk {'print $1'} | grep '^epel$' 2>/dev/null
 then
-    yum clean headers dbcache
-    echo "$0 INFO: ... installing epel repo for yum"
-    wget -O /tmp/epel.rpm $EPEL_RPM_URI                 \
-    && yum -y localinstall /tmp/epel.rpm                \
-    && [[ -r $EPEL_REPO_FILE ]]                         \
-    && sed -i 's/^enabled=1/enabled=0/' $EPEL_REPO_FILE \
-    && rm -f /tmp/epel.rpm
-
-    if ! yum repolist disabled | awk {'print $1'} | grep '^epel$' 2>/dev/null
-    then
-        echo "$0 ERROR: ... could not install epel."
-        exit 1
-    fi
+    echo "$0 ERROR: epel not installed. Can't continue." >&2
+    exit 1
 else
-    echo "$0: INFO: epel already installed."
+    echo "$0 INFO: ... Found epel. Will enable only for this installation."
 fi
 
 yum -y install python python-pip --enablerepo epel \
