@@ -17,6 +17,7 @@ MANDATORY_VARS=           \
 # ### CONSTANTS (not user-defineable)
 # SSH_PRIVATE_KEY_FILE ... for build this is the AWS dev account's 'eurostar' key
 #
+AMI_PREVIOUS_SOURCES=
 GIT_SHA_LEN=8
 PACKER_JSON=packer.json
 export AMI_PREFIX=eurostar_aws
@@ -64,7 +65,7 @@ export BUILD_GIT_ORG=$(shell \
 	| sed -e 's!.*[:/]\([^/]\+\)/.*!\1!' \
 )
 
-AMI_NAME_GIT_INFO=$(BUILD_GIT_SHA)-$(BUILD_GIT_BRANCH)
+AMI_NAME_GIT_INFO=$(BUILD_GIT_BRANCH)-$(BUILD_GIT_SHA)
 
 export BUILD_TIME=$(shell date +%Y%m%d%H%M%S)
 
@@ -77,6 +78,12 @@ export AMI_SOURCE_ID?=$(shell                                            \
 	--query 'Images[*].{ID:ImageId}'                                     \
 	--output text                                                        \
 )
+
+export AWS_TAG_AMI_SOURCES=$(AMI_PREVIOUS_SOURCES)$(AMI_PREFIX)[$(AMI_SOURCE_ID)]
+export AWS_TAG_BUILD_GIT_INFO=repo[$(BUILD_GIT_REPO)]branch[$(BUILD_GIT_BRANCH)]
+export AWS_TAG_BUILD_GIT_REF=tag[$(BUILD_GIT_TAG)]sha[$(BUILD_GIT_SHA)]
+export AWS_TAG_OS_INFO=os[$(AMI_OS)]os_release[$(AMI_OS_RELEASE)]
+
 export PACKER?=$(shell which packer)
 
 # ... validate MANDATORY_VARS are defined
