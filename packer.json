@@ -2,8 +2,10 @@
   "variables": {
     "ami_description": "{{env `AMI_DESCRIPTION`}}",
     "ami_name": "{{env `AMI_NAME`}}",
+    "ami_prefix": "{{env `AMI_PREFIX`}}",
     "ami_os": "{{env `AMI_OS`}}",
     "ami_os_release": "{{env `AMI_OS_RELEASE`}}",
+    "ami_previous_sources": "{{user `AMI_PREVIOUS_SOURCES`}}",
     "ami_source_id": "{{env `AMI_SOURCE_ID`}}",
     "aws_access_key_id": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
@@ -39,13 +41,12 @@
       "ssh_pty" : "true",
       "ssh_username": "{{user `ssh_username`}}",
       "tags": {
-        "ami_source_id": "{{user `ami_source_id` }}",
+        "ami_source_id": "{{user `ami_previous_sources`}}{{user `ami_prefix`}}[{{user `ami_source_id` }}]",
         "build_git_info": "repo[{{user `build_git_repo`}}]branch[{{user `build_git_branch`}}]",
         "build_git_ref": "tag[{{user `build_git_tag`}}]sha[{{user `build_git_sha`}}]",
         "build_time": "{{user `build_time`}}",
         "channel": "dev",
-        "os": "{{user `ami_os`}}",
-        "os_release": "{{user `ami_os_release`}}"
+        "os_info": "os[{{user `ami_os`}}]os_release[{{user `ami_os_release`}}]"
       }
     }
   ],

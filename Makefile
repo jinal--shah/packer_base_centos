@@ -19,7 +19,7 @@ MANDATORY_VARS=           \
 #
 GIT_SHA_LEN=8
 PACKER_JSON=packer.json
-AMI_PREFIX=eurostar_aws
+export AMI_PREFIX=eurostar_aws
 export AMI_DESC_TXT=ec2-user;permissive settings;awscli;cob;basic ops pkgs;yum updates
 export AMI_OS=centos
 export AMI_OS_RELEASE=6.5
