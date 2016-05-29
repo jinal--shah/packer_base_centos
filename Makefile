@@ -53,7 +53,11 @@ export PACKER_DIR?=./
 # ... to rebuild using same version of tools, we can't trust the git tag
 # but the branch, sha and repo, because git tags are mutable and movable.
 export BUILD_GIT_TAG=$(shell git describe --exact-match HEAD)
-export BUILD_GIT_BRANCH=$(shell git describe --contains --all HEAD)
+ifeq ($(BUILD_GIT_TAG),)
+	export BUILD_GIT_BRANCH=$(shell git describe --contains --all HEAD)
+else
+	export BUILD_GIT_BRANCH=detached_head
+endif
 export BUILD_GIT_SHA=$(shell git rev-parse --short=$(GIT_SHA_LEN) --verify HEAD)
 export BUILD_GIT_REPO=$(shell   \
 	git remote show -n origin   \
