@@ -17,9 +17,9 @@ MANDATORY_VARS=           \
 # ### CONSTANTS (not user-defineable)
 # SSH_PRIVATE_KEY_FILE ... for build this is the AWS dev account's 'eurostar' key
 #
-AMI_PREVIOUS_SOURCES=
-GIT_SHA_LEN=8
-PACKER_JSON=packer.json
+AMI_PREVIOUS_SOURCES:=
+GIT_SHA_LEN:=8
+PACKER_JSON:=packer.json
 export AMI_PREFIX:=eurostar_aws
 export AMI_DESC_TXT:=yum updates;ec2-user;permissive settings;awscli;cob;basic ops pkgs
 export AMI_OS:=centos
@@ -60,13 +60,13 @@ else
 	export BUILD_GIT_BRANCH:=detached_head
 endif
 export BUILD_GIT_SHA:=$(shell git rev-parse --short=$(GIT_SHA_LEN) --verify HEAD)
-export BUILD_GIT_REPO:=$(shell   \
+export BUILD_GIT_REPO:=$(shell	\
 	git remote show -n origin   \
 	| grep '^ *Push *'          \
 	| awk {'print $$NF'}        \
 )
-export BUILD_GIT_ORG:=$(shell \
-	echo $(BUILD_GIT_REPO)   \
+export BUILD_GIT_ORG:=$(shell	         \
+	echo $(BUILD_GIT_REPO)               \
 	| sed -e 's!.*[:/]\([^/]\+\)/.*!\1!' \
 )
 
