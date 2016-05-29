@@ -22,9 +22,9 @@ yum -y install cloud-init
 cp -r $UPLOADS/* /
 
 # ... verify
-if ! yum info cloud-init | grep -i 'repo.*: installed' >/dev/null
+if ! yum list installed cloud-init >/dev/null
 then
-    echo "$0 ERROR: ... can't find installed cloud-init in yum info" >&2
+    echo "$0 ERROR: ... can't find installed cloud-init in yum list installed" >&2
     exit 1
 fi
 
