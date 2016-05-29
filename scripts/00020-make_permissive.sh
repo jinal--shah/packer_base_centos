@@ -10,7 +10,7 @@ echo "$0 INFO: turning off iptables and selinux policies"
 chkconfig iptables off \
 && setenforce 0
 
-if ! getenforce 2>&1 | grep -i 'permissive' >/dev/null 2>&1
+if ! getenforce 2>&1 | grep -i '^permissive\|disabled$' >/dev/null 2>&1
 then
    echo "$0 ERROR: couldn't disable selinux ..."
    exit 1
