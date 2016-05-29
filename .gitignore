@@ -7,4 +7,4 @@
 **/*.pem
 **/*.gz
 **/*.swp
-**/packer_build_tools_common
+**/packer_includes
