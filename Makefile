@@ -78,7 +78,7 @@ export AMI_DESCRIPTION=$(AMI_OS_INFO): $(AMI_DESC_TXT)
 export AMI_NAME=$(AMI_PREFIX)-$(AMI_OS_INFO)-$(BUILD_TIME)-$(AMI_NAME_GIT_INFO)
 export AMI_SOURCE_ID?=$(shell                                            \
 	aws --cli-read-timeout 10 ec2 describe-images --region $(AWS_REGION) \
-	--filters 'Name=manifest-location,Values=$(AMI_SOURCE_FILTER)'        \
+	--filters 'Name=manifest-location,Values=$(AMI_SOURCE_FILTER)'       \
 	--query 'Images[*].{ID:ImageId}'                                     \
 	--output text                                                        \
 )
