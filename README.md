@@ -58,7 +58,7 @@ See generated value $AMI\_NAME in Makefile for more details.
         GIT_INFO="repo<*EurostarDigital/*>branch<master>"
         aws --cli-read-timeout 10 ec2 describe-images --region $AWS_REGION \
             --filters 'Name=manifest-location,Values=*/eurostar_aws*'      \
-                      'Name=tag:build_git_info,Values=EurostarDigital'     \
+                      "Name=tag:build_git_info,Values=$GIT_INFO"           \
                       'Name=tag:channel,Values=stable'                     \
             --query 'Images[*].[ImageId,CreationDate]'                     \
             --output text                                                  \
