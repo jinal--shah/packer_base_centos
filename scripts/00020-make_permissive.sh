@@ -5,10 +5,12 @@
 #
 # ... turns off iptables and selinux policies
 #
-echo "$0 INFO: turning off iptables and selinux policies"
+echo "$0 INFO: turning off iptables, ip6tables and selinux policies"
 
-chkconfig iptables off \
-&& setenforce 0
+chkconfig iptables off
+chkconfig ip6tables off
+
+setenforce 0
 
 if ! getenforce 2>&1 | grep -i '^permissive\|disabled$' >/dev/null 2>&1
 then
