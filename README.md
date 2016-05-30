@@ -44,25 +44,24 @@ It is also responsible for the creation of the standard ec2-user.
 
 The resulting AMI is named:
 
-        eurostar_aws-<os info>-<build time>-<src's git sha>-<src's git branch>
+        eurostar_aws-<os info>-<build git org>-<build time>
 
         e.g.
 
-        eurostar_aws-centos-6.5-20160522105037-0ad9aa7a-master
+        eurostar_aws-centos-6.5-EurostarDigital-20160522105037
 
 See generated value $AMI\_NAME in Makefile for more details.
 
 ## DISCOVERY
 
-        e.g. find ami_id for latest stable centos from a EurostarDigital master branch:
-
-        aws --cli-read-timeout 10 ec2 describe-images --region $AWS_REGION  \
-            --filter 'Name=manifest-location,Values=*/eurostar_aws-centos*' \
-            --filter 'Name=tag:build_git_org,Values=EurostarDigital'        \
-            --filter 'Name=tag:build_git_branch,Values=master'              \
-            --filter 'Name=tag:channel,Values=stable'                       \
-            --query 'Images[*].[ImageId,CreationDate]'                      \
-            --output text                                                   \
+        e.g. find ami_id for latest stable from a EurostarDigital master branch:
+        GIT_INFO="repo<*EurostarDigital/*>branch<master>"
+        aws --cli-read-timeout 10 ec2 describe-images --region $AWS_REGION \
+            --filters 'Name=manifest-location,Values=*/eurostar_aws*'      \
+                      'Name=tag:build_git_info,Values=EurostarDigital'     \
+                      'Name=tag:channel,Values=stable'                     \
+            --query 'Images[*].[ImageId,CreationDate]'                     \
+            --output text                                                  \
             | sort -k2 | tail -1 | awk {'print $1'}
 
 
