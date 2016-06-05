@@ -9,7 +9,9 @@ It is also responsible for the creation of the standard ec2-user.
 
 ## BUILD
 
-        # export all user-defined env vars, and then:
+        # 1. export all user-defined env vars
+        # 2. clone packer_includes in dir with this project's Makefile
+
         make build
 
 * makefile inherits values from env vars. These are transformed and / or
@@ -22,13 +24,15 @@ It is also responsible for the creation of the standard ec2-user.
 
 * make a git branch from master.
 
-* make your changes and push to your branch
+* make your changes and push to your branch.
+
+  **You won't be able to build if you have uncommitted changes in your local repo.**
 
 * build from your branch
 
 * The AMI will have a channel tag, set to _dev_.
 
-* After it is tested, merge to master.
+* After it is tested, **tag your build commit** and merge to master.
 
 * **On successful testing, the AMI's channel tag should be set to  _stable_.**
 
