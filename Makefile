@@ -42,6 +42,12 @@ export PACKER_DIR?=./
 #
 # ... to rebuild using same version of tools, we can't trust the git tag
 # but the branch, sha and repo, because git tags are mutable and movable.
+ifeq ($(BUILD_URL),)
+	AUDIT_MSG=$(shell git config user.name)@$(HOSTNAME)
+else
+	AUDIT_MSG=$(BUILD_URL)
+endif
+export AUDIT_MSG
 export BUILD_GIT_TAG:=$(shell git describe --exact-match HEAD 2>/dev/null)
 ifeq ($(BUILD_GIT_TAG),)
 	export BUILD_GIT_BRANCH:=$(shell git describe --contains --all HEAD)
