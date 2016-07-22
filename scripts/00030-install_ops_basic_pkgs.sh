@@ -17,6 +17,7 @@ PKGS="
     telnet
     tree
     vim-enhanced
+    ntp
 "
 
 echo    "$0 INFO: ... installing basic packages:"

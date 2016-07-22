@@ -9,7 +9,7 @@ include packer_includes/make/mandatory_vars/common.mak
 AMI_PREVIOUS_SOURCES:=
 GIT_SHA_LEN:=8
 PACKER_JSON:=packer.json
-export PACKER_INCLUDES_GIT_TAG=2.0.3
+export PACKER_INCLUDES_GIT_TAG=3.0.3
 export AMI_PREFIX:=eurostar_aws
 export AMI_OS:=centos
 export AMI_OS_RELEASE:=6.5
@@ -85,12 +85,12 @@ export PACKER?=$(shell which packer)
 include packer_includes/make/recipes/common.mak
 
 .PHONY: prereqs
-prereqs: sshkeyfile ## set up build env
+prereqs: no_detached_head sshkeyfile ## set up build env
 
 .PHONY: validate
 validate: check_vars check_includes check_for_changes valid_packer ## check build env is sane
 
 .PHONY: build
-build: prereqs validate ## run prereqs, validate then build.
+build: prereqs validate tag_project ## run prereqs, validate then build.
 	@PACKER_LOG=$(PACKER_LOG) packer build $(PACKER_DEBUG) "$(PACKER_JSON)"
 
