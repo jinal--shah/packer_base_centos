@@ -66,7 +66,7 @@ export BUILD_GIT_ORG:=$(shell            \
 )
 
 AMI_NAME_GIT_INFO:=$(BUILD_GIT_BRANCH)-$(BUILD_GIT_SHA)
-DESC_TXT:=yum updates;ec2-user;permissive settings;awscli;cob;basic ops pkgs
+DESC_TXT:=yum updates;ec2-user;permissive settings;awscli;cob;basic ops pkgs;ntp
 export AMI_OS_INFO:=$(AMI_OS)-$(AMI_OS_RELEASE)
 export AMI_DESCRIPTION:=$(AMI_OS_INFO): $(DESC_TXT)
 export AMI_NAME:=$(AMI_PREFIX)-$(AMI_OS_INFO)-$(BUILD_GIT_ORG)-$(BUILD_TIME)
