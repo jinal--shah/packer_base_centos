@@ -28,7 +28,7 @@ export SSH_USERNAME:=root
 #               THERE IS A BUG IN PACKER 0.10.0 - DEBUG WILL HANG
 #
 export AWS_ACCESS_KEY_ID?=
-export AWS_INSTANCE_TYPE?=t2.small
+export AWS_INSTANCE_TYPE?=t2.large
 export AWS_REGION?=eu-west-1
 export AWS_SECRET_ACCESS_KEY?=
 export PACKER_DEBUG?=
