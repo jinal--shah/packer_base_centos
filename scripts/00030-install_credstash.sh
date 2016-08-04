@@ -28,7 +28,8 @@ else
     echo "$0 INFO: ... Found epel. Will enable only for this installation."
 fi
 
-yum -y install python python-pip --enablerepo epel \
+yum -y install python python-pip openssl-dev --enablerepo epel \
+&& pip --no-cache-dir install --upgrade requests[security]     \
 && pip --no-cache-dir install --upgrade credstash
 
 if ! credstash -h >/dev/null 2>&1
