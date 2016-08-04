@@ -13,7 +13,7 @@ URL_JQ=https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
 BIN_PATH=/usr/local/bin/jq 
 
 yum -y install wget \
-&& wget $BIN_PATH -O "$URL_JQ" \
+&& wget -O $BIN_PATH "$URL_JQ" \
 && chmod a+x $BIN_PATH
 
 if ! jq --version >/dev/null 2>&1
