@@ -16,7 +16,7 @@ yum -y install wget \
 && wget -O $BIN_PATH "$URL_JQ" \
 && chmod a+x $BIN_PATH
 
-if ! jq --version >/dev/null 2>&1
+if ! $BIN_PATH --version
 then
     echo "$0 ERROR: jq not installed in to path correctly." >&2
     echo "          ... See ERROR messages above." >&2
