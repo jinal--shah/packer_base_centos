@@ -57,13 +57,13 @@ else
     echo "$0 INFO: ... Found epel. Will enable only for this installation."
 fi
 
-echo "$0 INFO: ... determining which tmp pkgs can be deleted after installing netdata"
+echo "$0 INFO: ... determining which tmp pkgs can be deleted after installing credstash"
 for my_pkg in $TMP_PKGS; do
     if is_installed $my_pkg
     then
-        echo "... won't remove pkg $my_pkg as installed prior to netdata."
+        echo "... won't remove pkg $my_pkg as installed prior to credstash."
     else
-        echo "... will remove pkg $my_pkg after installing netdata."
+        echo "... will remove pkg $my_pkg after installing credstash."
         TMP_PKGS_TO_ERASE="$TMP_PKGS_TO_ERASE $my_pkg"
     fi
 done
@@ -79,6 +79,6 @@ then
     exit 1
 fi
 
-[[ ! -z "$TMP_PKGS_TO_ERASE"]] && yum remove -y $TMP_PKGS_TO_ERASE
+[[ ! -z "$TMP_PKGS_TO_ERASE" ]] && yum remove -y $TMP_PKGS_TO_ERASE
 
 exit 0
