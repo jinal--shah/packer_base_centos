@@ -94,5 +94,5 @@ prereqs: no_detached_head sshkeyfile ## set up build env
 validate: check_vars check_includes check_for_changes valid_packer ## check build env is sane
 
 .PHONY: build
-build: prereqs validate tag_project run_packer push_tags ## run prereqs, validate then build.
+build: prereqs validate tag_project run_packer push_tags ## run prereqs, validate, build. On success, push tags
 
