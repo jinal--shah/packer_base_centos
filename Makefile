@@ -9,7 +9,7 @@ include packer_includes/make/mandatory_vars/common.mak
 AMI_PREVIOUS_SOURCES:=
 GIT_SHA_LEN:=8
 PACKER_JSON:=packer.json
-export PACKER_INCLUDES_GIT_TAG=3.0.3
+export PACKER_INCLUDES_GIT_TAG=3.0.4
 export AMI_PREFIX:=eurostar_aws
 export AMI_OS:=centos
 export AMI_OS_RELEASE:=6.5
